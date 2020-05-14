@@ -1,0 +1,4 @@
+name: mousetracking_django
+dependencies:
+  - python=3.7.7
+  - pip=20.0.2

@@ -1,0 +1,2 @@
+conda env create -f local-conda-environment.yml
+conda activate mousetracking_conda
