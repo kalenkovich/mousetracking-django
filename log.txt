@@ -6,3 +6,4 @@ pip install -r requirements.txt
 django-admin.exe startproject negation .
 # set time zone in settings.py
 # set the folder for static files
+# allow pythonanywhere as host
