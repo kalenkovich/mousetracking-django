@@ -38,3 +38,12 @@ python manage.py createsuperuser
 
 ## Show "Welcome!" at <url>/mt-neg/
 # in negation/urls.py route mt-neg/ uris to whatever is inside experiment/urls.py
+
+## Start building the experiment logic
+# After clicking "Continue" on the welcome page, the router view will return the trial page
+# Trial page and all the corresponding js and cs were developed independently and copied here
+# Once done (committed, merged, and pushed to github), update the code on pythonanywere
+# Run bash console again
+cd kalenkovich.pythonanywhere.com
+git pull
+
