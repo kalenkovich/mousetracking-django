@@ -33,3 +33,5 @@ python manage.py createsuperuser
 # pip3.6 install --user pythonanywhere
 # 4. Deploy
 # pa_autoconfigure_django.py --python=3.7https://github.com/kalenkovich/mousetracking-django.git
+# 5. Create admin user
+# python manage.py createsuperuser
