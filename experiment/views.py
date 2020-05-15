@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 
 def router(request):
@@ -10,4 +9,4 @@ def router(request):
 
 
 def welcome(request):
-    return HttpResponse('Welcome!')
+    return render(request, 'experiment/welcome.html')
