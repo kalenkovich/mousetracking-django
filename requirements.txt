@@ -1,0 +1,2 @@
+# The "~=" means "compatible release". Copied this from the djangogirls.org tutorial
+Django~=2.2.4

@@ -1,0 +1,11 @@
+conda env create -f local-conda-environment.yml
+conda activate mousetracking_conda
+python -m venv myvenv
+myvenv\Scripts\activate
+pip install -r requirements.txt
+django-admin.exe startproject negation .
+# set time zone in settings.py
+# set the folder for static files
+# allow pythonanywhere as host
+python manage.py migrate
+python manage.py runserver
