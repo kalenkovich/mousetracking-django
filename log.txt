@@ -19,3 +19,6 @@ python manage.py migrate experiment
 python manage.py makemigrations --empty experiment
 # Edit 002... migration
 python manage.py migrate experiment
+
+## Add admin
+python manage.py createsuperuser
