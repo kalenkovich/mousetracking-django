@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
 
 def router(request):
@@ -18,4 +17,4 @@ def welcome(request):
 
 
 def mousetracking(request):
-    return HttpResponse('The mousetracking will happen here')
+    return render(request, 'experiment/trial.html')
