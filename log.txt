@@ -15,3 +15,5 @@ python manage.py startapp experiment
 # After creating `Participant` model:
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+# Make a test subject
+python manage.py makemigrations --empty experiment
