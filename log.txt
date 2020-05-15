@@ -3,3 +3,4 @@ conda activate mousetracking_conda
 python -m venv myvenv
 myvenv\Scripts\activate
 pip install -r requirements.txt
+django-admin.exe startproject negation .
