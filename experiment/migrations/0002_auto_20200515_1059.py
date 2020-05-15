@@ -3,6 +3,12 @@
 from django.db import migrations
 
 
+def add_test_participant(apps, schema_editor):
+    Participant = apps.get_model('experiment', 'Participant')
+    test_participant = Participant(is_test=True)
+    test_participant.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -10,4 +16,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(add_test_participant),
     ]

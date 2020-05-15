@@ -17,3 +17,5 @@ python manage.py makemigrations experiment
 python manage.py migrate experiment
 # Make a test subject
 python manage.py makemigrations --empty experiment
+# Edit 002... migration
+python manage.py migrate experiment
