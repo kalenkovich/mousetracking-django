@@ -12,3 +12,6 @@ python manage.py runserver
 
 ## The experiment app
 python manage.py startapp experiment
+# After creating `Participant` model:
+python manage.py makemigrations experiment
+python manage.py migrate experiment
