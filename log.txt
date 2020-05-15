@@ -35,3 +35,6 @@ python manage.py createsuperuser
 # pa_autoconfigure_django.py --python=3.7https://github.com/kalenkovich/mousetracking-django.git
 # 5. Create admin user
 # python manage.py createsuperuser
+
+## Show "Welcome!" at <url>/mt-neg/
+# in negation/urls.py route mt-neg/ uris to whatever is inside experiment/urls.py
