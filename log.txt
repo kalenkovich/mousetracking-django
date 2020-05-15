@@ -9,3 +9,16 @@ django-admin.exe startproject negation .
 # allow pythonanywhere as host
 python manage.py migrate
 python manage.py runserver
+
+## The experiment app
+python manage.py startapp experiment
+# After creating `Participant` model:
+python manage.py makemigrations experiment
+python manage.py migrate experiment
+# Make a test subject
+python manage.py makemigrations --empty experiment
+# Edit 002... migration
+python manage.py migrate experiment
+
+## Add admin
+python manage.py createsuperuser
