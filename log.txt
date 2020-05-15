@@ -22,3 +22,16 @@ python manage.py migrate experiment
 
 ## Add admin
 python manage.py createsuperuser
+
+## Deploy
+# On pythonanywhere.com
+# 1. create API token
+# Account -> API token -> Create a new API token
+# 2. Open a console
+# Consoles -> Start a New Console -> Other -> Bash
+# 3. Install deployment helper
+# pip3.6 install --user pythonanywhere
+# 4. Deploy
+# pa_autoconfigure_django.py --python=3.7https://github.com/kalenkovich/mousetracking-django.git
+# 5. Create admin user
+# python manage.py createsuperuser
