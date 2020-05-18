@@ -52,4 +52,8 @@ git pull
 # After creating Trial, Image, and Audio models
 python manage.py makemigrations experiment
 python manage.py migrate
+# Fill the tables with initial values using a data migration
+python manage.py makemigrations --empty experiment
+# Edit 004... migration
+python manage.py migrate experiment
 
