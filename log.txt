@@ -47,3 +47,9 @@ python manage.py createsuperuser
 cd kalenkovich.pythonanywhere.com
 git pull
 
+## Make experimental lists
+# These will be rows in the Trial table bound to a participant
+# After creating Trial, Image, and Audio models
+python manage.py makemigrations experiment
+python manage.py migrate
+
