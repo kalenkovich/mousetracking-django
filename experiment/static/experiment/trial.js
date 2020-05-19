@@ -1,24 +1,23 @@
 trial = {
-	uris: {
-		left: acornURI,
-		right: axeURI,
-		audio: thisTimePositiveBottomURI,
-		frame_images: [
-			acornURI,
-			null,
-			axeURI,
-			null
-		]
-	},
-	
-	timing: {
-		frame: 1500,  // time to remember the objects
-		audio: 1160,  // time until the disambiguation point
+	uris: null,
+	timing: null,
+
+	get_settings: function () {
+		return new Promise((resolve, reject) => {
+			$.ajax({
+				url: 'get_new_trial_settings/',
+				dataType: 'json',
+				success: function (data) {
+					trial.uris = data.uris;
+					trial.timing = data.timing;
+				}
+			})
+		})
 	},
 	
 	setup: function(){
 		trial.add_all();
-		trial.promise_to_load_all().then(start_button.show);
+		trial.get_settings().then(trial.promise_to_load_all).then(start_button.show);
 		fullscreen.enforce_fullscreen();
 	},
 	
