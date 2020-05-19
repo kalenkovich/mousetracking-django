@@ -16,6 +16,10 @@ class Participant(models.Model):
         # TODO: get next trial that has not been sent to the participant yet
         return self.trial_set.first()
 
+    def get_last_sent_trial(self):
+        # TODO: get the last trial whose settings have been sent to the participant
+        return self.trial_set.first()
+
 
 class Trial(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
@@ -57,6 +61,10 @@ class Trial(models.Model):
                     frame_images=frame_images_uris)
         timing = dict(frame=1500, audio=1160)
         return dict(uris=uris, timing=timing)
+
+    def save_results(self, results):
+        # TODO: actually save the results
+        pass
 
 
 class ResourceModel(models.Model):

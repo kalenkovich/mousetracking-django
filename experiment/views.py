@@ -23,8 +23,15 @@ def mousetracking(request):
     return render(request, 'experiment/trial.html')
 
 
-def get_new_trial_settings(request):
-    participant: Participant = Participant.get_participant(request)
+def get_new_trial_settings(request, participant: Participant = None):
+    participant: Participant = participant or Participant.get_participant(request)
     trial: Trial = participant.get_next_trial()
     trial_settings = trial.get_settings()
     return JsonResponse(data=trial_settings)
+
+
+def save_trial_results(request):
+    participant: Participant = Participant.get_participant(request)
+    trial: Trial = participant.get_last_sent_trial()
+    trial.save_results(request.GET.get('results'))
+    return get_new_trial_settings(request, participant=participant)

@@ -19,6 +19,23 @@ trial = {
 			})
 		})
 	},
+
+	send_results: function() {
+		// also gets the new settings
+		return new Promise((resolve, reject) => {
+			$.post({
+				url: 'save_trial_results/',
+				headers: {"X-CSRFToken": csrf_token},
+				dataType: 'json',
+				data: {results: null}, // TODO: add actual data
+				success: function(data) {
+					console.log('Results successfully sent')
+					trial.update_settings(data);
+					resolve();
+				}
+			})
+		})
+	},
 	
 	setup: function(){
 		trial.add_all();
@@ -88,7 +105,7 @@ trial = {
 		$('.response-div').prop("disabled", true);
 		$('#start-button').prop("disabled", false);
 		mousetracking.stop_tracking();
-		trial.hide_all();
+		trial.send_results().then(trial.hide_all);
 	},
 	
 	debug: function(){
