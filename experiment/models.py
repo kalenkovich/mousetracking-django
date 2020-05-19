@@ -67,6 +67,17 @@ class Trial(models.Model):
         pass
 
 
+class TrialResults(models.Model):
+    trial = models.ForeignKey(Trial, on_delete=models.PROTECT)
+
+    start_pressed = models.DateTimeField()
+    frame_presented = models.DateTimeField()
+    audio_started = models.DateTimeField()
+    response_selected = models.DateTimeField()
+    selected_response = models.CharField(max_length=40)
+    trajectory = models.TextField()
+
+
 class ResourceModel(models.Model):
     name = models.CharField(max_length=40)
     uri = models.URLField()

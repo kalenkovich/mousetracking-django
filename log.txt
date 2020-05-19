@@ -57,3 +57,7 @@ python manage.py makemigrations --empty experiment
 # Edit 004... migration
 python manage.py migrate experiment
 
+## Save trial results
+# After creating TrialResults model:
+python manage.py makemigrations experiment
+python manage.py migrate experiment
