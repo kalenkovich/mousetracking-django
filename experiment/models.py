@@ -1,10 +1,20 @@
 from django.db import models
 from django.utils import timezone
+from django.templatetags.static import static
 
 
 class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     is_test = models.BooleanField(default=False)
+
+    @classmethod
+    def get_participant(cls, request):
+        # TODO: get participant from a cookie
+        return cls.objects.get(is_test=True)
+
+    def get_next_trial(self):
+        # TODO: get next trial that has not been sent to the participant yet
+        return self.trial_set.first()
 
 
 class Trial(models.Model):
@@ -33,6 +43,20 @@ class Trial(models.Model):
 
     # Time before the options are presented and the cursor is released
     hold_duration = models.IntegerField()
+
+    def get_settings(self):
+        frame_images_uris = [
+            static(self.frame_top_left.uri) if self.frame_top_left else None,
+            static(self.frame_top_right.uri) if self.frame_top_right else None,
+            static(self.frame_bottom_left.uri) if self.frame_bottom_left else None,
+            static(self.frame_bottom_right.uri) if self.frame_top_right else None
+        ]
+        uris = dict(left=static(self.response_option_left.uri),
+                    right=static(self.response_option_right.uri),
+                    audio=static(self.audio.uri),
+                    frame_images=frame_images_uris)
+        timing = dict(frame=1500, audio=1160)
+        return dict(uris=uris, timing=timing)
 
 
 class ResourceModel(models.Model):

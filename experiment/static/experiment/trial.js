@@ -2,14 +2,19 @@ trial = {
 	uris: null,
 	timing: null,
 
+	update_settings: function(data){
+		trial.uris = data.uris;
+		trial.timing = data.timing;
+	},
+
 	get_settings: function () {
 		return new Promise((resolve, reject) => {
 			$.ajax({
 				url: 'get_new_trial_settings/',
 				dataType: 'json',
-				success: function (data) {
-					trial.uris = data.uris;
-					trial.timing = data.timing;
+				success: function(data) {
+					trial.update_settings(data);
+					resolve();
 				}
 			})
 		})

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from .models import Image, Audio
+from .models import Participant, Trial
 
 
 def router(request):
@@ -24,12 +24,7 @@ def mousetracking(request):
 
 
 def get_new_trial_settings(request):
-
-    acorn_uri = Image.objects.get(name='acorn').uri
-    axe_uri = Image.objects.get(name='axe').uri
-    audio_uri = Audio.objects.get(name='this-time_positive_bottom').uri
-    frame_images = [acorn_uri, None, axe_uri, None]
-    uris = dict(left=acorn_uri, right=axe_uri, audio=audio_uri, frame_images=frame_images)
-    timing = dict(frame=1500, audio=1160)
-    data = dict(uris=uris, timing=timing)
-    return JsonResponse(data=data)
+    participant: Participant = Participant.get_participant(request)
+    trial: Trial = participant.get_next_trial()
+    trial_settings = trial.get_settings()
+    return JsonResponse(data=trial_settings)
