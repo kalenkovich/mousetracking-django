@@ -47,3 +47,22 @@ python manage.py createsuperuser
 cd kalenkovich.pythonanywhere.com
 git pull
 
+## Make experimental lists
+# These will be rows in the Trial table bound to a participant
+# After creating Trial, Image, and Audio models
+python manage.py makemigrations experiment
+python manage.py migrate
+# Fill the tables with initial values using a data migration
+python manage.py makemigrations --empty experiment
+# Edit 004... migration
+python manage.py migrate experiment
+
+## Save trial results
+# After creating TrialResults model:
+python manage.py makemigrations experiment
+python manage.py migrate experiment
+# To avoid saving multiple results for one trial, the Trial field of TrialResults was changed to OneToOneField
+# If there are already multiple results for the test trial, delete all of them with TrialResults.objects.all().delete()
+# in the Django shell
+python manage.py makemigrations experiment
+python manage.py migrate experiment
