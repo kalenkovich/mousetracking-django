@@ -29,6 +29,8 @@ def get_new_trial_settings(request, participant: Participant = None):
     participant: Participant = participant or Participant.get_participant(request)
     trial: Trial = participant.get_next_trial()
     trial_settings = trial.get_settings()
+    trial.sent = True
+    trial.save()
     return JsonResponse(data=trial_settings)
 
 

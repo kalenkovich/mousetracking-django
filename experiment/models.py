@@ -15,12 +15,10 @@ class Participant(models.Model):
         return cls.objects.get(is_test=True)
 
     def get_next_trial(self):
-        # TODO: get next trial that has not been sent to the participant yet
-        return self.trial_set.first()
+        return self.trial_set.filter(sent=False).order_by('number').first()
 
     def get_last_sent_trial(self):
-        # TODO: get the last trial whose settings have been sent to the participant
-        return self.trial_set.first()
+        return self.trial_set.filter(sent=True).order_by('number').last()
 
     def create_trials(self, test=False):
         experiment_list = self.create_trial_list(test=test)
@@ -72,6 +70,9 @@ class Trial(models.Model):
     number = models.IntegerField()
 
     participant = models.ForeignKey(Participant, on_delete=models.PROTECT)
+
+    # Have we sent this trial to the participant already
+    sent = models.BooleanField(default=False)
 
     frame_top_left = models.ForeignKey('Image', on_delete=models.PROTECT, default=None, null=True,
                                        related_name='trials_with_this_in_top_left')
