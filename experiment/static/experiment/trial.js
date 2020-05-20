@@ -1,6 +1,19 @@
+function get_current_time(){
+	return new Date()
+}
+
 trial = {
 	uris: null,
 	timing: null,
+
+	results: {
+		dt_start_pressed: null,
+		dt_frame_presented: null,
+		dt_audio_started: null,
+		dt_response_selected: null,
+		selected_response: null,
+		trajectory: null
+	},
 
 	update_settings: function(data){
 		trial.uris = data.uris;
@@ -27,7 +40,7 @@ trial = {
 				url: 'save_trial_results/',
 				headers: {"X-CSRFToken": csrf_token},
 				dataType: 'json',
-				data: {results: null}, // TODO: add actual data
+				data: JSON.stringify({results: trial.results}),
 				success: function(data) {
 					console.log('Results successfully sent')
 					trial.update_settings(data);
@@ -105,6 +118,7 @@ trial = {
 		$('.response-div').prop("disabled", true);
 		$('#start-button').prop("disabled", false);
 		mousetracking.stop_tracking();
+		trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
 		trial.send_results().then(trial.hide_all);
 	},
 	
@@ -182,7 +196,7 @@ frame = {
 			img_element = $('#image-' + i).get(0);
 			if (uri !== null) {promises.push(promise_to_load_image(img_element, uri))};
 		}
-		return Promise.all(promises);
+		return Promise.all(promises).then(() => trial.results.dt_frame_presented = get_current_time());
 	},
 	
 	show: function(){
@@ -200,6 +214,9 @@ audio = {
 		const audio_element = document.createElement('audio');
 		audio_element.id = 'audio';
 		audio_element.style.visibility = 'hidden';
+		audio_element.addEventListener('play', (event) => {
+		  	trial.results.dt_audio_started = get_current_time();
+		});
 		document.body.appendChild(audio_element);
 	},
 	
@@ -246,7 +263,11 @@ response_options = {
 		div.innerHTML = '<img class = "as-large-as-fits" id=' + id + '-img></img>';
 		
 		// Stop trial on click
-		div.onclick = function(){trial.stop()};
+		div.onclick = function () {
+			trial.results.dt_response_selected = get_current_time();
+			trial.stop();
+			trial.results.selected_response = corner;
+		};
 		
 		document.body.appendChild(div);
 	},
@@ -299,7 +320,10 @@ start_button = {
 		div.style.backgroundColor = 'white';
 		
 		// Start on click
-		div.onclick = function(){trial.start()};
+		div.onclick = function(){
+			trial.results.dt_start_pressed = get_current_time();
+			trial.start()
+		};
 		
 		div.style.visibility = 'hidden';
 		document.body.appendChild(div);

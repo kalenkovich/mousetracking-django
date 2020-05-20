@@ -63,8 +63,16 @@ class Trial(models.Model):
         return dict(uris=uris, timing=timing)
 
     def save_results(self, results):
-        # TODO: actually save the results
-        pass
+        trial_results = TrialResults(
+            trial=self,
+            start_pressed=results['dt_start_pressed'],
+            frame_presented=results['dt_frame_presented'],
+            audio_started=results['dt_audio_started'],
+            response_selected=results['dt_response_selected'],
+            selected_response=results['selected_response'],
+            trajectory=results['trajectory'],
+        )
+        trial_results.save()
 
 
 class TrialResults(models.Model):

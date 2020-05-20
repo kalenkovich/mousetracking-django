@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from django.http import JsonResponse
 
@@ -33,5 +35,5 @@ def get_new_trial_settings(request, participant: Participant = None):
 def save_trial_results(request):
     participant: Participant = Participant.get_participant(request)
     trial: Trial = participant.get_last_sent_trial()
-    trial.save_results(request.GET.get('results'))
+    trial.save_results(json.loads(request.body.decode('utf-8')).get('results'))
     return get_new_trial_settings(request, participant=participant)
