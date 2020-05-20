@@ -77,3 +77,6 @@ python manage.py migrate experiment
 python manage.py makemigrations --empty experiment
 # Edit 0008...
 python manage.py migrate experiment
+# Made Audio and Image names unique
+python manage.py makemigrations experiment
+python manage.py migrate experiment
