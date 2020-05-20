@@ -98,7 +98,7 @@ class Trial(models.Model):
             static(self.frame_top_left.uri) if self.frame_top_left else None,
             static(self.frame_top_right.uri) if self.frame_top_right else None,
             static(self.frame_bottom_left.uri) if self.frame_bottom_left else None,
-            static(self.frame_bottom_right.uri) if self.frame_top_right else None
+            static(self.frame_bottom_right.uri) if self.frame_bottom_right else None
         ]
         uris = dict(left=static(self.response_option_left.uri),
                     right=static(self.response_option_right.uri),
