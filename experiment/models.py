@@ -1,3 +1,5 @@
+import pandas as pd
+
 from django.db import models
 from django.utils import timezone
 from django.templatetags.static import static
@@ -19,6 +21,49 @@ class Participant(models.Model):
     def get_last_sent_trial(self):
         # TODO: get the last trial whose settings have been sent to the participant
         return self.trial_set.first()
+
+    def create_trials(self, test=False):
+        experiment_list = self.create_trial_list(test=test)
+
+        for number, row in enumerate(experiment_list.itertuples(), 1):
+            print(row)
+            trial = Trial(participant=self, number=number)
+
+            trial.frame_top_left = Image.get_if_exists(name=row.frame[0][0])
+            trial.frame_top_right = Image.get_if_exists(name=row.frame[0][1])
+            trial.frame_bottom_left = Image.get_if_exists(name=row.frame[1][0])
+            trial.frame_bottom_right = Image.get_if_exists(name=row.frame[1][1])
+            trial.frame_duration = row.frame_duration
+
+            trial.response_option_left = Image.objects.get(name=row.response_option_left)
+            trial.response_option_right = Image.objects.get(name=row.response_option_right)
+
+            trial.audio = Audio.objects.get(name=row.audio_name)
+            trial.hold_duration = row.hold_duration
+
+            trial.save()
+
+    @classmethod
+    def create_trial_list(cls, test=False) -> pd.DataFrame:
+        if not test:
+            # TODO: make a random experiment list
+            raise NotImplementedError
+        else:
+            return cls.create_test_trial_list()
+
+    @staticmethod
+    def create_test_trial_list():
+        return pd.DataFrame(
+            columns='frame,frame_duration,response_option_left,response_option_right,audio_name,hold_duration'.split(
+                ','),
+            data=[
+                [[[None, 'acorn'], ['axe', None]], 1500, 'acorn', 'axe', 'in-this-picture_left_negative', 1714],
+                [[['acorn', None], [None, 'axe']], 1500, 'axe', 'acorn', 'this-time_negative_top', 1123],
+                [[['flask', 'acorn'], [None, 'axe']], 2250, 'acorn', 'axe', 'this-time_negative_top', 1123],
+                [[['medal', 'axe'], ['flask', 'acorn']], 3000, 'medal', 'acorn', 'this-time_top_negative', 1442],
+                [[['flask', 'medal'], ['axe', None]], 2250, 'axe', 'medal', 'this-time_negative_right', 1123],
+                [[[None, 'acorn'], ['flask', 'medal']], 2250, 'acorn', 'flask', 'this-time_positive_bottom', 1160],
+            ])
 
 
 class Trial(models.Model):
@@ -92,6 +137,13 @@ class ResourceModel(models.Model):
 
     class Meta:
         abstract = True
+
+    @classmethod
+    def get_if_exists(cls, **kwargs):
+        try:
+            return cls.objects.get(**kwargs)
+        except cls.DoesNotExist:
+            return None
 
 
 class Image(ResourceModel):
