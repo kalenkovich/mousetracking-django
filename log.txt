@@ -66,3 +66,10 @@ python manage.py migrate experiment
 # in the Django shell
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Add more test trials
+# First, we add more objects and sentences. We've also moved them to 'audio' and 'objects' folders, so the data
+# migration will have to delete the old ones first.
+python manage.py makemigrations --empty experiment
+# Edit 0007...
+python manage.py migrate experiment
