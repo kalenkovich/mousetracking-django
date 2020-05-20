@@ -265,8 +265,8 @@ response_options = {
 		// Stop trial on click
 		div.onclick = function () {
 			trial.results.dt_response_selected = get_current_time();
-			trial.stop();
 			trial.results.selected_response = corner;
+			trial.stop();
 		};
 		
 		document.body.appendChild(div);
