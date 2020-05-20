@@ -90,6 +90,7 @@ trial = {
 	run: function(){
 		// show frame
 		frame.show();
+		trial.results.dt_frame_presented = get_current_time();
 		window.setTimeout(
 			function(){
 				// hide frame, start playing audio
@@ -196,7 +197,7 @@ frame = {
 			img_element = $('#image-' + i).get(0);
 			if (uri !== null) {promises.push(promise_to_load_image(img_element, uri))};
 		}
-		return Promise.all(promises).then(() => trial.results.dt_frame_presented = get_current_time());
+		return Promise.all(promises);
 	},
 	
 	show: function(){
