@@ -76,7 +76,7 @@ class Trial(models.Model):
 
 
 class TrialResults(models.Model):
-    trial = models.ForeignKey(Trial, on_delete=models.PROTECT)
+    trial = models.OneToOneField(Trial, on_delete=models.PROTECT)
 
     start_pressed = models.DateTimeField()
     frame_presented = models.DateTimeField()

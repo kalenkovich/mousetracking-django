@@ -61,3 +61,8 @@ python manage.py migrate experiment
 # After creating TrialResults model:
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+# To avoid saving multiple results for one trial, the Trial field of TrialResults was changed to OneToOneField
+# If there are already multiple results for the test trial, delete all of them with TrialResults.objects.all().delete()
+# in the Django shell
+python manage.py makemigrations experiment
+python manage.py migrate experiment
