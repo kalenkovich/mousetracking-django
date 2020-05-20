@@ -1,2 +1,7 @@
-# The "~=" means "compatible release". Copied this from the djangogirls.org tutorial
-Django~=2.2.4
+Django==2.2.12
+numpy==1.18.4
+pandas==1.0.3
+python-dateutil==2.8.1
+pytz==2020.1
+six==1.14.0
+sqlparse==0.3.1
