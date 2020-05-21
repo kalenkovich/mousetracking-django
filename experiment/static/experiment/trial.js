@@ -3,11 +3,6 @@ function get_current_time(){
 }
 
 trial = {
-	uris: null,
-	timing: null,
-
-	// Whether a trial with the current settings has been run already. Set to false when settings are updated.
-	has_been_run: true,
 
 	results: {
 		dt_start_pressed: null,
@@ -18,11 +13,37 @@ trial = {
 		trajectory: null
 	},
 
-	update_settings: function(data){
+	// Trial info (what to show, whether it has been run) are stored in localStorage
+	set uris(value) {
+		localStorage.setItem('uris', JSON.stringify(value));
+	},
+
+	get uris() {
+		return JSON.parse(localStorage.getItem('uris'));
+	},
+
+	set timing(value) {
+		localStorage.setItem('timing', JSON.stringify(value));
+	},
+
+	get timing() {
+		return JSON.parse(localStorage.getItem('timing'));
+	},
+
+	set has_been_run(value) {
+		localStorage.setItem('has_been_run', JSON.stringify(value));
+	},
+
+	get has_been_run() {
+		return JSON.parse(localStorage.getItem('has_been_run'));
+	},
+
+	update_settings: function (data) {
 		trial.uris = data.uris;
 		trial.timing = data.timing;
 		trial.has_been_run = false;
 	},
+	// end of trial info stuff
 
 	handle_ajax_response: function(data) {
 		if (data.type == 'trial_settings')	{
@@ -36,7 +57,8 @@ trial = {
 		// Gets new trial settings from the server if necessary.
 		// Might get called when the current settings have not been used yet, then resolves immediately.
 		return new Promise((resolve, reject) => {
-			if (trial.has_been_run) {
+			// trial.has_been_run is null before any settings were received at all
+			if (trial.has_been_run === true | trial.has_been_run === null) {
 				$.ajax({
 					url: 'get_new_trial_settings/',
 					dataType: 'json',
