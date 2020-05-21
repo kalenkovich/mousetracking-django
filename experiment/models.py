@@ -9,6 +9,8 @@ class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     is_test = models.BooleanField(default=False)
 
+    is_done = models.BooleanField(default=False)
+
     @classmethod
     def get_participant(cls, request):
         # TODO: get participant from a cookie

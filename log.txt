@@ -83,3 +83,6 @@ python manage.py migrate experiment
 # Added a 'sent' flag to Trial
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+# Added 'is_done' flag to Participant
+python manage.py makemigrations experiment
+python manage.py migrate experiment
