@@ -66,3 +66,23 @@ python manage.py migrate experiment
 # in the Django shell
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Add more test trials
+# First, we add more objects and sentences. We've also moved them to 'audio' and 'objects' folders, so the data
+# migration will have to delete the old ones first.
+python manage.py makemigrations --empty experiment
+# Edit 0007...
+python manage.py migrate experiment
+# Now, we can create 6 trials for the test participant
+python manage.py makemigrations --empty experiment
+# Edit 0008...
+python manage.py migrate experiment
+# Made Audio and Image names unique
+python manage.py makemigrations experiment
+python manage.py migrate experiment
+# Added a 'sent' flag to Trial
+python manage.py makemigrations experiment
+python manage.py migrate experiment
+# Added 'is_done' flag to Participant
+python manage.py makemigrations experiment
+python manage.py migrate experiment

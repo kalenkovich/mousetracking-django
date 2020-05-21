@@ -6,6 +6,9 @@ trial = {
 	uris: null,
 	timing: null,
 
+	// Whether a trial with the current settings has been run already. Set to false when settings are updated.
+	has_been_run: true,
+
 	results: {
 		dt_start_pressed: null,
 		dt_frame_presented: null,
@@ -18,18 +21,33 @@ trial = {
 	update_settings: function(data){
 		trial.uris = data.uris;
 		trial.timing = data.timing;
+		trial.has_been_run = false;
+	},
+
+	handle_ajax_response: function(data) {
+		if (data.type == 'trial_settings')	{
+			trial.update_settings(data);
+		} else if (data.type == 'redirect') {
+			location.reload();
+		}
 	},
 
 	get_settings: function () {
+		// Gets new trial settings from the server if necessary.
+		// Might get called when the current settings have not been used yet, then resolves immediately.
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: 'get_new_trial_settings/',
-				dataType: 'json',
-				success: function(data) {
-					trial.update_settings(data);
-					resolve();
-				}
-			})
+			if (trial.has_been_run) {
+				$.ajax({
+					url: 'get_new_trial_settings/',
+					dataType: 'json',
+					success: function (data) {
+						trial.handle_ajax_response(data);
+						resolve();
+					}
+				})
+			} else {
+				resolve();
+			}
 		})
 	},
 
@@ -43,7 +61,7 @@ trial = {
 				data: JSON.stringify({results: trial.results}),
 				success: function(data) {
 					console.log('Results successfully sent')
-					trial.update_settings(data);
+					trial.handle_ajax_response(data);
 					resolve();
 				}
 			})
@@ -72,11 +90,10 @@ trial = {
 	},
 	
 	hide_all: function(){
-		// except the start button
 		frame.hide();
 		// audio.stop();
 		response_options.hide();
-		start_button.show();
+		start_button.hide();
 	},
 	
 	start: function(){
@@ -88,8 +105,10 @@ trial = {
 	},
 	
 	run: function(){
+		trial.has_been_run = true;
 		// show frame
 		frame.show();
+		trial.results.dt_frame_presented = get_current_time();
 		window.setTimeout(
 			function(){
 				// hide frame, start playing audio
@@ -108,18 +127,30 @@ trial = {
 	},
 	
 	abort: function(){
+		// Hide everything
 		$('.response-div').prop("disabled", true);
 		$('#start-button').prop("disabled", false);
-		mousetracking.reset();
 		trial.hide_all();
+
+		// Discard any mousetracking data
+		mousetracking.reset();
+
+		/// Set up a new trial (if the last trial has not been run yet, it will not change)
+		trial.setup();
 	},
 	
 	stop: function(){
 		$('.response-div').prop("disabled", true);
 		$('#start-button').prop("disabled", false);
+		trial.hide_all();
+
+		// send the results to the server
 		mousetracking.stop_tracking();
 		trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
-		trial.send_results().then(trial.hide_all);
+		trial.send_results();
+
+		// set up the next trial
+		trial.setup();
 	},
 	
 	debug: function(){
@@ -128,14 +159,23 @@ trial = {
 }
 
 function promise_to_load_image(img_element, uri){
-	return new Promise((resolve, reject) => {
-		img_element.onload = function(){
-			console.log(uri + ' loaded');
+	if (uri != null) {
+		return new Promise((resolve, reject) => {
+			img_element.onload = function () {
+				console.log(uri + ' loaded');
+				resolve();
+			};
+			img_element.onerror = reject;
+			img_element.style.display = 'inline';
+			img_element.src = uri;
+		})
+	} else {
+		return new Promise((resolve, reject) => {
+			img_element.style.display = 'none';
+			img_element.src = '';
 			resolve();
-		};
-		img_element.onerror = reject;
-		img_element.src = uri;
-	 });
+		})
+	}
 }
 
 frame = {
@@ -194,9 +234,9 @@ frame = {
 		for (var i = 0; i < 4; i++){
 			uri = trial.uris.frame_images[i];
 			img_element = $('#image-' + i).get(0);
-			if (uri !== null) {promises.push(promise_to_load_image(img_element, uri))};
+			promises.push(promise_to_load_image(img_element, uri));
 		}
-		return Promise.all(promises).then(() => trial.results.dt_frame_presented = get_current_time());
+		return Promise.all(promises);
 	},
 	
 	show: function(){
@@ -265,8 +305,8 @@ response_options = {
 		// Stop trial on click
 		div.onclick = function () {
 			trial.results.dt_response_selected = get_current_time();
-			trial.stop();
 			trial.results.selected_response = corner;
+			trial.stop();
 		};
 		
 		document.body.appendChild(div);
