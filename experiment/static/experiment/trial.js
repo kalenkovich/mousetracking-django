@@ -151,14 +151,23 @@ trial = {
 }
 
 function promise_to_load_image(img_element, uri){
-	return new Promise((resolve, reject) => {
-		img_element.onload = function(){
-			console.log(uri + ' loaded');
+	if (uri != null) {
+		return new Promise((resolve, reject) => {
+			img_element.onload = function () {
+				console.log(uri + ' loaded');
+				resolve();
+			};
+			img_element.onerror = reject;
+			img_element.style.display = 'inline';
+			img_element.src = uri;
+		})
+	} else {
+		return new Promise((resolve, reject) => {
+			img_element.style.display = 'none';
+			img_element.src = '';
 			resolve();
-		};
-		img_element.onerror = reject;
-		img_element.src = uri;
-	 });
+		})
+	}
 }
 
 frame = {
@@ -217,7 +226,7 @@ frame = {
 		for (var i = 0; i < 4; i++){
 			uri = trial.uris.frame_images[i];
 			img_element = $('#image-' + i).get(0);
-			if (uri !== null) {promises.push(promise_to_load_image(img_element, uri))};
+			promises.push(promise_to_load_image(img_element, uri));
 		}
 		return Promise.all(promises);
 	},
