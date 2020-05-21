@@ -86,3 +86,11 @@ python manage.py migrate experiment
 # Added 'is_done' flag to Participant
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Deploy
+# We needed to update the virtual environment, run migrations, collect static files. Not sure if it was a good idea but
+# I reran the Django configuration script instead.
+# On pythonanywhere, in a console
+pa_autoconfigure_django.py --python=3.7 https://github.com/kalenkovich/mousetracking-django.git
+# This did not work, so I had to edit migration 0008, delete `db.sqlite3`, and run
+django manage.py migrate
