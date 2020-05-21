@@ -6,6 +6,9 @@ trial = {
 	uris: null,
 	timing: null,
 
+	// Whether a trial with the current settings has been run already. Set to false when settings are updated.
+	has_been_run: true,
+
 	results: {
 		dt_start_pressed: null,
 		dt_frame_presented: null,
@@ -18,18 +21,25 @@ trial = {
 	update_settings: function(data){
 		trial.uris = data.uris;
 		trial.timing = data.timing;
+		trial.has_been_run = false;
 	},
 
 	get_settings: function () {
+		// Gets new trial settings from the server if necessary.
+		// Might get called when the current settings have not been used yet, then resolves immediately.
 		return new Promise((resolve, reject) => {
-			$.ajax({
-				url: 'get_new_trial_settings/',
-				dataType: 'json',
-				success: function(data) {
-					trial.update_settings(data);
-					resolve();
-				}
-			})
+			if (trial.has_been_run) {
+				$.ajax({
+					url: 'get_new_trial_settings/',
+					dataType: 'json',
+					success: function (data) {
+						trial.update_settings(data);
+						resolve();
+					}
+				})
+			} else {
+				resolve();
+			}
 		})
 	},
 
@@ -72,11 +82,10 @@ trial = {
 	},
 	
 	hide_all: function(){
-		// except the start button
 		frame.hide();
 		// audio.stop();
 		response_options.hide();
-		start_button.show();
+		start_button.hide();
 	},
 	
 	start: function(){
@@ -88,6 +97,7 @@ trial = {
 	},
 	
 	run: function(){
+		trial.has_been_run = true;
 		// show frame
 		frame.show();
 		trial.results.dt_frame_presented = get_current_time();
@@ -109,18 +119,30 @@ trial = {
 	},
 	
 	abort: function(){
+		// Hide everything
 		$('.response-div').prop("disabled", true);
 		$('#start-button').prop("disabled", false);
-		mousetracking.reset();
 		trial.hide_all();
+
+		// Discard any mousetracking data
+		mousetracking.reset();
+
+		/// Set up a new trial (if the last trial has not been run yet, it will not change)
+		trial.setup();
 	},
 	
 	stop: function(){
 		$('.response-div').prop("disabled", true);
 		$('#start-button').prop("disabled", false);
+		trial.hide_all();
+
+		// send the results to the server
 		mousetracking.stop_tracking();
 		trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
-		trial.send_results().then(trial.hide_all);
+		trial.send_results();
+
+		// set up the next trial
+		trial.setup();
 	},
 	
 	debug: function(){
