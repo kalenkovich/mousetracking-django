@@ -169,10 +169,7 @@ trial = {
 		// send the results to the server
 		mousetracking.stop_tracking();
 		trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
-		trial.send_results();
-
-		// set up the next trial
-		trial.setup();
+		trial.send_results().then(trial.promise_to_load_all).then(start_button.show);
 	},
 	
 	debug: function(){
