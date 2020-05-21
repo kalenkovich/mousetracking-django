@@ -24,6 +24,14 @@ trial = {
 		trial.has_been_run = false;
 	},
 
+	handle_ajax_response: function(data) {
+		if (data.type == 'trial_settings')	{
+			trial.update_settings(data);
+		} else if (data.type == 'redirect') {
+			location.reload();
+		}
+	},
+
 	get_settings: function () {
 		// Gets new trial settings from the server if necessary.
 		// Might get called when the current settings have not been used yet, then resolves immediately.
@@ -33,7 +41,7 @@ trial = {
 					url: 'get_new_trial_settings/',
 					dataType: 'json',
 					success: function (data) {
-						trial.update_settings(data);
+						trial.handle_ajax_response(data);
 						resolve();
 					}
 				})
@@ -53,7 +61,7 @@ trial = {
 				data: JSON.stringify({results: trial.results}),
 				success: function(data) {
 					console.log('Results successfully sent')
-					trial.update_settings(data);
+					trial.handle_ajax_response(data);
 					resolve();
 				}
 			})

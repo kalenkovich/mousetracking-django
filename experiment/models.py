@@ -17,7 +17,12 @@ class Participant(models.Model):
         return cls.objects.get(is_test=True)
 
     def get_next_trial(self):
-        return self.trial_set.filter(sent=False).order_by('number').first()
+        next_trial = self.trial_set.filter(sent=False).order_by('number').first()
+        if not next_trial:
+            self.is_done = True
+            self.save()
+
+        return next_trial
 
     def get_last_sent_trial(self):
         return self.trial_set.filter(sent=True).order_by('number').last()
