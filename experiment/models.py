@@ -3,10 +3,13 @@ import pandas as pd
 from django.db import models
 from django.utils import timezone
 from django.templatetags.static import static
+from django.contrib.sessions.models import Session
 
 
 class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
+    session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
+
     is_test = models.BooleanField(default=False)
 
     is_done = models.BooleanField(default=False)
