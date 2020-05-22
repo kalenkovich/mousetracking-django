@@ -30,6 +30,7 @@ var mousetracking = {
 		console.log('Started tracking');
 		mousetracking.trajectory = [];
 		fake_cursor.turn_on();
+		fake_cursor.hold();
 		fake_cursor.hide();
 	},
 	
@@ -125,6 +126,13 @@ var fake_cursor = {
 		fake_cursor.let_user_move();
 		$(document).mousemove(mouseMoveCallback);
 		fake_cursor.let_user_click();
+	},
+
+	hold: function(){
+		$(document).unbind("mousemove", fake_cursor.mouseMoveCallback);
+		fake_cursor.mouseMoveCallback = null;
+		fake_cursor.stop_moving();
+		fake_cursor.stop_clicking_with();
 	},
 	
 	unlock_pointer: function(){
