@@ -37,7 +37,7 @@ const mousetracking = {
     },
 
     stop_tracking: function () {
-        $(document).unbind('mousemove', mousetracking.add_current_coordinates);
+        document.removeEventListener('mousemove', mousetracking.add_current_coordinates);
         console.log('Stopped tracking');
         mousetracking.plot_trajectory();
     },
@@ -109,8 +109,6 @@ const fake_cursor = {
     },
 
     let_user_click: function () {
-        // This is to avoid binding the function twice. I don't know a better way.
-        fake_cursor.stop_clicking_with();
         window.addEventListener("mouseup", fake_cursor.click);
     },
 
@@ -128,12 +126,12 @@ const fake_cursor = {
         fake_cursor.mouseMoveCallback = mouseMoveCallback;
         fake_cursor.show();
         fake_cursor.let_user_move();
-        $(document).mousemove(mouseMoveCallback);
+        document.addEventListener('mousemove', mouseMoveCallback);
         fake_cursor.let_user_click();
     },
 
     hold: function () {
-        $(document).unbind("mousemove", fake_cursor.mouseMoveCallback);
+        document.removeEventListener('mousemove', fake_cursor.mouseMoveCallback);
         fake_cursor.mouseMoveCallback = null;
         fake_cursor.stop_moving();
         fake_cursor.stop_clicking_with();
@@ -167,7 +165,7 @@ const fake_cursor = {
     },
 
     turn_off: function () {
-        $(document).unbind("mousemove", fake_cursor.mouseMoveCallback);
+        document.removeEventListener("mousemove", fake_cursor.mouseMoveCallback);
         fake_cursor.mouseMoveCallback = null;
         fake_cursor.unlock_pointer();
         fake_cursor.remove_event_listener(fake_cursor.handle_pointer_unlocking);
@@ -199,8 +197,8 @@ const fake_cursor = {
 
     copy_mouse_movement: function (event) {
 
-        let x = fake_cursor.position.x += (event.movementX || event.originalEvent.movementX);
-        let y = fake_cursor.position.y += (event.movementY || event.originalEvent.movementY);
+        let x = fake_cursor.position.x += event.movementX;
+        let y = fake_cursor.position.y += event.movementY;
         [x, y] = fake_cursor.bound_coordinates(x, y);
 
         fake_cursor.position.x = x;
@@ -210,13 +208,11 @@ const fake_cursor = {
     },
 
     stop_moving: function () {
-        $(document).unbind('mousemove', fake_cursor.copy_mouse_movement);
+        document.removeEventListener('mousemove', fake_cursor.copy_mouse_movement);
     },
 
     let_user_move: function () {
-        // This is to avoid binding the function twice. I don't know a better way.
-        fake_cursor.stop_moving();
-        $(document).mousemove(fake_cursor.copy_mouse_movement);
+        document.addEventListener('mousemove', fake_cursor.copy_mouse_movement);
     },
 
     click: function () {
@@ -228,7 +224,7 @@ const fake_cursor = {
     },
 
     stop_clicking_with() {
-        $(window).unbind('mouseup', fake_cursor.click);
+        window.removeEventListener('mouseup', fake_cursor.click)
     },
 };
 

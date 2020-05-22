@@ -273,6 +273,10 @@ frame = {
 };
 
 audio = {
+    log_dt_audio_started: function() {
+        trial.results.dt_audio_started = get_current_time();
+    },
+
     add: function () {
         if ($('#audio').length) {
             return
@@ -281,9 +285,7 @@ audio = {
         const audio_element = document.createElement('audio');
         audio_element.id = 'audio';
         audio_element.style.visibility = 'hidden';
-        audio_element.addEventListener('play', () => {
-            trial.results.dt_audio_started = get_current_time();
-        });
+        audio_element.addEventListener('play', audio.log_dt_audio_started);
         document.body.appendChild(audio_element);
     },
 
