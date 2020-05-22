@@ -16,8 +16,17 @@ class Participant(models.Model):
 
     @classmethod
     def get_participant(cls, request):
-        # TODO: get participant from a cookie
-        return cls.objects.get(is_test=True)
+        # This will create the session instance if it does not exist yet
+        if not request.session.session_key:
+            request.session.save()
+        session = Session.objects.get(session_key=request.session.session_key)
+        try:
+            return session.participant
+        except Session.participant.RelatedObjectDoesNotExist:
+            participant = cls.objects.create(session=session)
+            # TODO: change to test=False once creating trial lists is properly implemented
+            participant.create_trials(test=True)
+            return participant
 
     def get_next_trial(self):
         next_trial = self.trial_set.filter(sent=False).order_by('number').first()
@@ -54,7 +63,7 @@ class Participant(models.Model):
     @classmethod
     def create_trial_list(cls, test=False) -> pd.DataFrame:
         if not test:
-            # TODO: make a random experiment list
+            # TODO: make a random experiment list, set get_participant to use test=False once done
             raise NotImplementedError
         else:
             return cls.create_test_trial_list()
