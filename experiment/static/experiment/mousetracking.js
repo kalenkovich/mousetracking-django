@@ -177,14 +177,16 @@ var fake_cursor = {
 	},
 	
 	bound_coordinates: function(x, y){
-		// bound coordinates by the window sizeToContent
+		// bound coordinates by the window size minus one pixel
+		// minus one pixel - so that the cursor is visible on the right and bottom edegs - this is normal behavior
+
 		width = $(window).width();
 		x = Math.max(x, 0);
-		x = Math.min(x, width);
+		x = Math.min(x, width - 1);
 		
 		height = $(window).height();
 		y = Math.max(y, 0);
-		y = Math.min(y, height);
+		y = Math.min(y, height - 1);
 		
 		return [x, y];
 	},
