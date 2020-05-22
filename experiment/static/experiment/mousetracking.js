@@ -1,4 +1,5 @@
 var mousetracking = {
+	onPointerUnlock: () => {},  // do nothing by default
 	
 	normalize_coordinates: function(coordinates){
 		// bottom center is (0,0), top right is (1, 1), top left is (-1,1)
@@ -22,7 +23,7 @@ var mousetracking = {
 	
 	handle_pointer_unlocking: function(){
 		if (document.pointerLockElement === null){
-			trial.abort();
+			mousetracking.onPointerUnlock();
 		};
 	},
 	

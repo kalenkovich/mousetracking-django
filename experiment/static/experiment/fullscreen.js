@@ -1,4 +1,6 @@
 var fullscreen = {
+	onFullscreenExit: () => {},  // do nothing by default
+
 	/* View in fullscreen */
 	open: function() {
 		var elem = document.documentElement;
@@ -75,7 +77,7 @@ var fullscreen = {
 	
 	handle_exit: function(){
 		if (document.fullscreenElement === null){
-			trial.abort();  // TODO: This script should know nothing about any trials
+			fullscreen.onFullscreenExit();
 			$("body").css("overflow", "auto");
 			fullscreen.ask_for_fullscreen();
 		}

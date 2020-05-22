@@ -93,6 +93,7 @@ trial = {
 	setup: function(){
 		trial.add_all();
 		trial.get_settings().then(trial.promise_to_load_all).then(start_button.show);
+		fullscreen.onFullscreenExit = trial.abort;
 		fullscreen.enforce_fullscreen();
 	},
 	
@@ -122,6 +123,7 @@ trial = {
 		$('#start-button').prop("disabled", true);
 		$('.response-div').prop("disabled", false);
 		start_button.hide();
+		mousetracking.onPointerUnlock = trial.abort;
 		mousetracking.start_tracking();
 		trial.run();
 	},
