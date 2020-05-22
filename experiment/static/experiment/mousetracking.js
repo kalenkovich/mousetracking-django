@@ -19,7 +19,6 @@ const mousetracking = {
         };
         mousetracking.trajectory.push(coordinates);
         const xy_normalized = mousetracking.normalize_coordinates(coordinates);
-        console.log(xy_normalized);
     },
 
     handle_pointer_unlocking: function () {
@@ -56,6 +55,7 @@ const mousetracking = {
     },
 
     release_cursor: function () {
+        console.log('Released the cursor');
         fake_cursor.release(mousetracking.add_current_coordinates);
     }
 
@@ -207,8 +207,6 @@ const fake_cursor = {
         fake_cursor.position.y = y;
 
         fake_cursor.redraw();
-
-        console.log(x, y);
     },
 
     stop_moving: function () {
