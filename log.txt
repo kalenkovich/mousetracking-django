@@ -94,3 +94,13 @@ python manage.py migrate experiment
 pa_autoconfigure_django.py --python=3.7 https://github.com/kalenkovich/mousetracking-django.git
 # This did not work, so I had to edit migration 0008, delete `db.sqlite3`, and run
 django manage.py migrate
+
+
+## Create new Participant for a new browser session - don't use the test subject anymore
+# In settings.py check that:
+# 1. 'django.contrib.sessions.middleware.SessionMiddleware' is in the MIDDLEWARE list
+# 2. 'django.contrib.sessions' is in the INSTALLED_APPS list
+# Set session cookies to expire in 1 day: SESSION_COOKIE_AGE = 60 * 60 * 24
+# Add a session field to Participant
+python manage.py makemigrations experiment
+python manage.py migrate experiment
