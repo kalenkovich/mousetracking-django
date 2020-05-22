@@ -1,6 +1,24 @@
 var fullscreen = {
 	onFullscreenExit: () => {},  // do nothing by default
 
+	add_popup: function() {
+		if ($('#backdrop-div').length){return};
+		div = document.createElement('div');
+		div.className = 'backdrop';
+		div.id = "backdrop-div";
+		div.innerHTML = `
+		  <!-- From solution here: https://stackoverflow.com/a/44328113/3042770 -->
+		  <div id="popdiv">
+			This experiment must be run in fullscreen mode.
+			<br>
+			To exit fullscreen mode, press ESC.
+			<br>
+			<button id="btn-go-fullscreen">Switch to fullscreen</button>
+		  </div>
+		`;
+		document.body.appendChild(div);
+	},
+
 	/* View in fullscreen */
 	open: function() {
 		var elem = document.documentElement;
@@ -84,6 +102,7 @@ var fullscreen = {
 	},
 	
 	enforce_fullscreen: function(){
+		fullscreen.add_popup();
 		fullscreen.add_event_listener(fullscreen.handle_exit);
 		fullscreen.ask_for_fullscreen();
 	},

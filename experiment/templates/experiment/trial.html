@@ -1,23 +1,17 @@
 {% load static from staticfiles %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="{% static "experiment/mousetracking.js" %}"></script>
-<script src="{% static "experiment/fullscreen.js" %}"></script>
-<link rel="stylesheet" type="text/css" href="{% static "experiment/fullscreen.css" %}">
-<link rel="stylesheet" type="text/css" href="{% static "experiment/trial.css" %}">
-<script>
-    const cursorURI = '{%  static "experiment/cursor.svg" %}';
-    const csrf_token = '{{csrf_token}}';
-</script>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="{% static "experiment/mousetracking.js" %}"></script>
+    <script src="{% static "experiment/fullscreen.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "experiment/fullscreen.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "experiment/trial.css" %}">
+    <script>
+        const cursorURI = '{%  static "experiment/cursor.svg" %}';
+        const csrf_token = '{{csrf_token}}';
+    </script>
+</head>
 
-<!-- From solution here: https://stackoverflow.com/a/44328113/3042770 -->
-<div class="backdrop">
-  <div id="popdiv">
-	This experiment must be run in fullscreen mode.
-	<br>
-	To exit fullscreen mode, press ESC.
-    <button id="btn-go-fullscreen">Switch to fullscreen</button
-  </div>
-</div>
-
-<script src="../../static/experiment/trial.js" onload ="trial.setup()"></script>
+<body>
+<script src="../../static/experiment/trial.js" onload="trial.setup()"></script>
+</body>
