@@ -1,4 +1,4 @@
-var fullscreen = {
+const fullscreen = {
     onFullscreenExit: () => {
     },  // do nothing by default
 
@@ -7,7 +7,7 @@ var fullscreen = {
             return
         }
 
-        div = document.createElement('div');
+        const div = document.createElement('div');
         div.className = 'backdrop';
         div.id = "backdrop-div";
         div.innerHTML = `
@@ -25,7 +25,7 @@ var fullscreen = {
 
     /* View in fullscreen */
     open: function () {
-        var elem = document.documentElement;
+        const elem = document.documentElement;
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
         } else if (elem.mozRequestFullScreen) { /* Firefox */
@@ -39,7 +39,6 @@ var fullscreen = {
 
     /* Close fullscreen */
     close: function () {
-        var elem = document.documentElement;
         if (document.exitFullscreen) {
             document.exitFullscreen();
         } else if (document.mozCancelFullScreen) { /* Firefox */
@@ -84,8 +83,9 @@ var fullscreen = {
             return
         }
         $(".backdrop").fadeTo(200, 1);
-        $("#btn-go-fullscreen").off('click');
-        $("#btn-go-fullscreen").click(fullscreen.switch_to_fullscreen);
+        const button_selector =  $("#btn-go-fullscreen");
+        button_selector.off('click');
+        button_selector.click(fullscreen.switch_to_fullscreen);
     },
 
     hide_popup: function () {

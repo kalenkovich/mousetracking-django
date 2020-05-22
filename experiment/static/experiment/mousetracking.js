@@ -1,24 +1,24 @@
-var mousetracking = {
+const mousetracking = {
     onPointerUnlock: () => {
     },  // do nothing by default
 
     normalize_coordinates: function (coordinates) {
         // bottom center is (0,0), top right is (1, 1), top left is (-1,1)
-        coords = coordinates;
-        x_normalized = coords.x / coords.width - 0.5;
-        y_normalized = 1 - coords.y / coords.height;
+        const coords = coordinates;
+        const x_normalized = coords.x / coords.width - 0.5;
+        const y_normalized = 1 - coords.y / coords.height;
         return [x_normalized, y_normalized];
     },
 
-    add_current_coordinates: function (event) {
-        coordinates = {
+    add_current_coordinates: function () {
+        const coordinates = {
             x: fake_cursor.position.x,
             y: fake_cursor.position.y,
             width: $(window).width(),
             height: $(window).height()
         };
         mousetracking.trajectory.push(coordinates);
-        xy_normalized = mousetracking.normalize_coordinates(coordinates);
+        const xy_normalized = mousetracking.normalize_coordinates(coordinates);
         console.log(xy_normalized);
     },
 
@@ -45,7 +45,7 @@ var mousetracking = {
 
     plot_trajectory: function () {
         plotting.make_canvas();
-        for (coords of mousetracking.trajectory) {
+        for (let coords of mousetracking.trajectory) {
             plotting.add_point(coords.x, coords.y);
         }
     },
@@ -61,7 +61,7 @@ var mousetracking = {
 
 };
 
-var fake_cursor = {
+const fake_cursor = {
     height: 20,
 
     add_event_listener: function (fun) {
@@ -70,7 +70,7 @@ var fake_cursor = {
     },
 
     lock_pointer: function () {
-        doc_elem = document.documentElement;
+        const doc_elem = document.documentElement;
         doc_elem.requestPointerLock = doc_elem.requestPointerLock ||
             doc_elem.mozRequestPointerLock;
         doc_elem.requestPointerLock();
@@ -82,7 +82,7 @@ var fake_cursor = {
         }
 
 
-        var cursor_img = document.createElement("img");
+        const cursor_img = document.createElement("img");
         cursor_img.src = cursorURI;
         cursor_img.id = "cursor-img";
         // This makes the cursor invisible to document.elementFromPoint.
@@ -101,10 +101,10 @@ var fake_cursor = {
     position: {x: $(window).width() / 2, y: $(window).height() - 20},
 
     redraw: function () {
-        cursor_img = $('#cursor-img').get(0);
-        x = fake_cursor.position.x;
+        const cursor_img = $('#cursor-img').get(0);
+        const x = fake_cursor.position.x;
         cursor_img.style.left = x + "px";
-        y = fake_cursor.position.y;
+        const y = fake_cursor.position.y;
         cursor_img.style.top = y + "px";
     },
 
@@ -151,7 +151,7 @@ var fake_cursor = {
     },
 
     hide: function () {
-        cursor_img = $('#cursor-img').get(0);
+        const cursor_img = $('#cursor-img').get(0);
         if (cursor_img) {
             cursor_img.style.visibility = 'hidden';
         }
@@ -159,7 +159,7 @@ var fake_cursor = {
     },
 
     show: function () {
-        cursor_img = $('#cursor-img').get(0);
+        const cursor_img = $('#cursor-img').get(0);
         if (cursor_img) {
             cursor_img.style.visibility = 'visible';
         }
@@ -177,7 +177,7 @@ var fake_cursor = {
     },
 
     reset_position: function () {
-        position = fake_cursor.position;
+        const position = fake_cursor.position;
         position.x = $(window).width() / 2;
         position.y = $(window).height() - fake_cursor.height;
     },
@@ -186,11 +186,11 @@ var fake_cursor = {
         // bound coordinates by the window size minus one pixel
         // minus one pixel - so that the cursor is visible on the right and bottom edegs - this is normal behavior
 
-        width = $(window).width();
+        const width = $(window).width();
         x = Math.max(x, 0);
         x = Math.min(x, width - 1);
 
-        height = $(window).height();
+        const height = $(window).height();
         y = Math.max(y, 0);
         y = Math.min(y, height - 1);
 
@@ -199,8 +199,8 @@ var fake_cursor = {
 
     copy_mouse_movement: function (event) {
 
-        x = fake_cursor.position.x += (event.movementX || event.originalEvent.movementX);
-        y = fake_cursor.position.y += (event.movementY || event.originalEvent.movementY);
+        let x = fake_cursor.position.x += (event.movementX || event.originalEvent.movementX);
+        let y = fake_cursor.position.y += (event.movementY || event.originalEvent.movementY);
         [x, y] = fake_cursor.bound_coordinates(x, y);
 
         fake_cursor.position.x = x;
@@ -221,9 +221,9 @@ var fake_cursor = {
         $(document).mousemove(fake_cursor.copy_mouse_movement);
     },
 
-    click: function (event) {
-        pos = fake_cursor.position;
-        var object_under_cursor = document.elementFromPoint(pos.x, pos.y);
+    click: function () {
+        const pos = fake_cursor.position;
+        const object_under_cursor = document.elementFromPoint(pos.x, pos.y);
         if (object_under_cursor !== null) {
             object_under_cursor.click();
         }
@@ -234,13 +234,13 @@ var fake_cursor = {
     },
 };
 
-var plotting = {
+const plotting = {
     make_canvas: function () {
         if (typeof plotting.canvas !== 'undefined') {
             return;
         }
 
-        var canvas = document.createElement("canvas");
+        const canvas = document.createElement("canvas");
         plotting.canvas = canvas;
 
         canvas.setAttribute("style", "z-index:-1; display: block; width: 100%; height: 100%;");
@@ -249,10 +249,10 @@ var plotting = {
     },
 
     add_point: function (x, y) {
-        var ctx = plotting.canvas.getContext("2d");
-        var rect = plotting.canvas.getBoundingClientRect();
-        x_ = (x - rect.left) / (rect.right - rect.left) * plotting.canvas.width,
-            y_ = (y - rect.top) / (rect.bottom - rect.top) * plotting.canvas.height;
+        const ctx = plotting.canvas.getContext("2d");
+        const rect = plotting.canvas.getBoundingClientRect();
+        const x_ = (x - rect.left) / (rect.right - rect.left) * plotting.canvas.width;
+        const y_ = (y - rect.top) / (rect.bottom - rect.top) * plotting.canvas.height;
         ctx.fillRect(Math.round(x_), Math.round(y_), 1, 1);
     }
 };

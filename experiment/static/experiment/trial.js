@@ -2,7 +2,7 @@ function get_current_time() {
     return new Date()
 }
 
-trial = {
+const trial = {
 
     results: {
         dt_start_pressed: null,
@@ -46,9 +46,9 @@ trial = {
     // end of trial info stuff
 
     handle_ajax_response: function (data) {
-        if (data.type == 'trial_settings') {
+        if (data.type === 'trial_settings') {
             trial.update_settings(data);
-        } else if (data.type == 'redirect') {
+        } else if (data.type === 'redirect') {
             location.reload();
         }
     },
@@ -58,7 +58,7 @@ trial = {
         // Might get called when the current settings have not been used yet, then resolves immediately.
         return new Promise((resolve, reject) => {
             // trial.has_been_run is null before any settings were received at all
-            if (trial.has_been_run === true | trial.has_been_run === null) {
+            if (trial.has_been_run === true || trial.has_been_run === null) {
                 $.ajax({
                     url: 'get_new_trial_settings/',
                     dataType: 'json',
@@ -105,7 +105,7 @@ trial = {
     },
 
     promise_to_load_all: function () {
-        load_promises = [
+        const load_promises = [
             response_options.promise_to_load_images(),
             frame.promise_to_load_images(),
             audio.promise_to_load()];
@@ -205,9 +205,9 @@ frame = {
         // the frame had ~17 px borders and ~220 px square cells,
         // the screen resolution was 1920x780
         // returns cell side and border width as percentages of the width
-        percent_per_pixel = 100 / 1920;
-        border = 17 * percent_per_pixel;
-        cell_side = 210 * percent_per_pixel;
+        const percent_per_pixel = 100 / 1920;
+        const border = 17 * percent_per_pixel;
+        const cell_side = 210 * percent_per_pixel;
         return [cell_side, border];
     },
 
@@ -216,7 +216,7 @@ frame = {
             return
         }
 
-        div = document.createElement('div');
+        const div = document.createElement('div');
         div.style.visibility = 'hidden';
         div.className = 'center-of-the-screen';
         div.id = "frame-div";
@@ -224,18 +224,18 @@ frame = {
 			<table class="frame">
 				<tr>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-0"></img>
+						<img class = "as-large-as-fits" id="image-0">
 					</td>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-1"></img>
+						<img class = "as-large-as-fits" id="image-1">
 					</td>
 				</tr>
 				<tr>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-2"></img>
+						<img class = "as-large-as-fits" id="image-2">
 					</td>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-3"></img>
+						<img class = "as-large-as-fits" id="image-3">
 					</td>
 				</tr>
 			</table>
@@ -254,10 +254,10 @@ frame = {
     },
 
     promise_to_load_images: function () {
-        var promises = [];
-        for (var i = 0; i < 4; i++) {
-            uri = trial.uris.frame_images[i];
-            img_element = $('#image-' + i).get(0);
+        const promises = [];
+        for (let i = 0; i < 4; i++) {
+            let uri = trial.uris.frame_images[i];
+            let img_element = $('#image-' + i).get(0);
             promises.push(promise_to_load_image(img_element, uri));
         }
         return Promise.all(promises);
@@ -281,14 +281,14 @@ audio = {
         const audio_element = document.createElement('audio');
         audio_element.id = 'audio';
         audio_element.style.visibility = 'hidden';
-        audio_element.addEventListener('play', (event) => {
+        audio_element.addEventListener('play', () => {
             trial.results.dt_audio_started = get_current_time();
         });
         document.body.appendChild(audio_element);
     },
 
     promise_to_load: function () {
-        audio_element = $('#audio').get(0);
+        const audio_element = $('#audio').get(0);
         return new Promise((resolve, reject) => {
             audio_element.oncanplaythrough = function () {
                 console.log('audio loaded');
@@ -301,26 +301,26 @@ audio = {
     },
 
     play: function () {
-        audio_element = $('#audio').get(0);
+        const audio_element = $('#audio').get(0);
         audio_element.play();
     }
 };
 
 response_options = {
     add_response: function (corner) {
-        id = 'response-' + corner;
+        const id = 'response-' + corner;
         if ($('#' + id).length) {
             return
         }
 
-        div = document.createElement('div');
+        const div = document.createElement('div');
         div.className = 'response-div';
         div.id = id;
-        cssText = "position: absolute; height:10vw; width: 10vw; top: 0%;";
+        let cssText = "position: absolute; height:10vw; width: 10vw; top: 0%;";
         cssText += "border: 3px solid black;";
-        if (corner == 'left') {
+        if (corner === 'left') {
             cssText += 'left: 0%;';
-        } else if (corner == 'right') {
+        } else if (corner === 'right') {
             cssText += 'right: 0%;';
         }
         div.style.cssText = cssText;
@@ -330,7 +330,7 @@ response_options = {
         div.style.backgroundColor = 'white';
 
         // Add image
-        div.innerHTML = '<img class = "as-large-as-fits" id=' + id + '-img></img>';
+        div.innerHTML = '<img class = "as-large-as-fits" id=' + id + '-img>';
 
         // Stop trial on click
         div.onclick = function () {
@@ -348,7 +348,7 @@ response_options = {
     },
 
     promise_to_load_images: function () {
-        var promises = [
+        const promises = [
             promise_to_load_image($('#response-left-img').get(0), trial.uris.left),
             promise_to_load_image($('#response-right-img').get(0), trial.uris.right)
         ];
@@ -367,12 +367,12 @@ response_options = {
 
 start_button = {
     add: function () {
-        id = 'start-button';
+        const id = 'start-button';
         if ($('#' + id).length) {
             return
         }
 
-        div = document.createElement('div');
+        const div = document.createElement('div');
         div.className = 'bottom-center-of-the-screen';
         div.id = id;
         div.style.height = "10vh";
