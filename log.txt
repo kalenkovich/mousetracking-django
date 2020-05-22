@@ -100,3 +100,4 @@ django manage.py migrate
 # In settings.py check that:
 # 1. 'django.contrib.sessions.middleware.SessionMiddleware' is in the MIDDLEWARE list
 # 2. 'django.contrib.sessions' is in the INSTALLED_APPS list
+# Set session cookies to expire in 1 day: SESSION_COOKIE_AGE = 60 * 60 * 24
