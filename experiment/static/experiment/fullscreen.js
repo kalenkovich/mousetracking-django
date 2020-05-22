@@ -69,11 +69,14 @@ var fullscreen = {
 	switch_to_fullscreen: function(){
 		fullscreen.hide_popup();
 		fullscreen.open();
+		// disable scrollbars
+		$("body").css("overflow", "hidden");
 	},
 	
 	handle_exit: function(){
 		if (document.fullscreenElement === null){
-			trial.abort();
+			trial.abort();  // TODO: This script should know nothing about any trials
+			$("body").css("overflow", "auto");
 			fullscreen.ask_for_fullscreen();
 		}
 	},
