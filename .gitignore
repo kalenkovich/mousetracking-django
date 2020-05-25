@@ -132,3 +132,4 @@ dmypy.json
 myvenv/
 .idea/
 static/
+secret_key.txt
