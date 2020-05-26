@@ -133,3 +133,4 @@ myvenv/
 .idea/
 /static/
 secret_key.txt
+/experiment/static/experiment/audio/wav/
