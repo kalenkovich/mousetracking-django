@@ -114,3 +114,15 @@ python manage.py migrate experiment
 conda activate mousetracking
 python convert-wav-to-ogg.py
 # Committed the ogg files.
+
+## Update the Audio and Image tables
+# First, wipe the database
+from experiment.models import TrialResults, Trial, Audio, Image, Participant
+
+
+
+# Prepare a data migration
+python manage.py makemigrations --empty experiment
+# Edit 0013 - wipe all tables, populate Audio and Image
+# apply migation
+python manage.py migrate experiment
