@@ -1,3 +1,5 @@
+import uuid
+
 import pandas as pd
 
 from django.db import models
@@ -85,6 +87,7 @@ class Participant(models.Model):
 
 class Trial(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False)
     # First, second, etc. trial
     number = models.IntegerField()
 
