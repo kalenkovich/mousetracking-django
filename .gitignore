@@ -131,5 +131,6 @@ dmypy.json
 # venv virtual environment
 myvenv/
 .idea/
-static/
+/static/
 secret_key.txt
+/experiment/static/experiment/audio/wav/

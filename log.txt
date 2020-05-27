@@ -104,3 +104,25 @@ django manage.py migrate
 # Add a session field to Participant
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+
+## Add all the images and all the audio
+# Added and committed all images.
+# Moved the wav files to the "wav" folder, added the missing ones, ignored this folder - we will not commit these files.
+# Converted all the wav files to ogg and saved them to the "ogg" folder.
+# To run the conversion, open a new terminal in experiment/static/experiment/audio and run:
+conda activate mousetracking
+python convert-wav-to-ogg.py
+# Committed the ogg files.
+
+## Update the Audio and Image tables
+# First, wipe the database
+from experiment.models import TrialResults, Trial, Audio, Image, Participant
+
+
+
+# Prepare a data migration
+python manage.py makemigrations --empty experiment
+# Edit 0013 - wipe all tables, populate Audio and Image
+# apply migation
+python manage.py migrate experiment
