@@ -44,6 +44,7 @@ def get_new_trial_settings(request, participant: Participant = None):
     if trial:
         trial_settings = trial.get_settings()
         trial_settings['type'] = 'trial_settings'
+        trial_settings['trial_id'] = trial.unique_id
         trial.sent = True
         trial.save()
         return JsonResponse(data=trial_settings)
@@ -52,7 +53,9 @@ def get_new_trial_settings(request, participant: Participant = None):
 
 
 def save_trial_results(request):
+    results = json.loads(request.body.decode('utf-8')).get('results')
     participant: Participant = Participant.get_participant(request)
     trial: Trial = participant.get_last_sent_trial()
-    trial.save_results(json.loads(request.body.decode('utf-8')).get('results'))
+    if trial is not None and results.get('trial_id') == trial.unique_id:
+        trial.save_results(results)
     return get_new_trial_settings(request, participant=participant)

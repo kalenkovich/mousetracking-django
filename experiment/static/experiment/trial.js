@@ -10,7 +10,8 @@ const trial = {
         dt_audio_started: null,
         dt_response_selected: null,
         selected_response: null,
-        trajectory: null
+        trajectory: null,
+        trial_id: null
     },
 
     // Trial info (what to show, whether it has been run) are stored in localStorage
@@ -38,9 +39,18 @@ const trial = {
         return JSON.parse(localStorage.getItem('has_been_run'));
     },
 
+    set trial_id(value) {
+        localStorage.setItem('trial_id', JSON.stringify(value));
+    },
+
+    get trial_id() {
+        return JSON.parse(localStorage.getItem('trial_id'));
+    },
+
     update_settings: function (data) {
         trial.uris = data.uris;
         trial.timing = data.timing;
+        trial.trial_id = data.trial_id;
         trial.has_been_run = false;
     },
     // end of trial info stuff
@@ -92,7 +102,12 @@ const trial = {
 
     setup: function () {
         trial.add_all();
-        trial.get_settings().then(trial.promise_to_load_all).then(start_button.show);
+        trial.get_settings()
+            .then(trial.promise_to_load_all)
+            .then(() => {
+                trial.results.trial_id = trial.trial_id;
+                start_button.show();
+            });
         fullscreen.onFullscreenExit = trial.abort;
         fullscreen.enforce_fullscreen();
     },
