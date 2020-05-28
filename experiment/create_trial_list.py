@@ -1,6 +1,6 @@
 #################################################################################
 # 1_prepare_experimental_sheets.py
-#!/usr/bin/env python
+# !/usr/bin/env python
 # coding: utf-8
 
 from collections import OrderedDict
@@ -195,24 +195,10 @@ def assign_objects(trials):
 
 # # Make sheets
 
-N_PARTICIPANTS = 32
-SEED = 31313131
-
-
-def make_sheet(file_path):
+def make_sheet():
     trials = make_trials()
-    sheet = assign_objects(trials)
-    sheet.to_pickle(file_path)
+    return assign_objects(trials)
 
-
-random_seed(SEED)
-np.random.seed(SEED)
-for i in range(N_PARTICIPANTS):
-    n = i + 1
-    print('Making sheet {:02d}'.format(n))
-    file_path = sheets_folder / 'participant-{:02d}.pkl'.format(n)
-    assert not file_path.exists()
-    make_sheet(file_path)
 
 # ## Training trials
 
@@ -237,7 +223,6 @@ np.random.seed(SEED + 1)
 trials = make_trials()
 sheet = assign_objects(trials)
 
-file_path = sheets_folder / 'training.pkl'
 
 np.random.seed(SEED + 1)
 practice_trials = pd.merge(
@@ -248,7 +233,6 @@ practice_trials = pd.merge(
     on=['side', 'polarity', 'object_number', 'order']
 )
 
-practice_trials.to_pickle(file_path)
 
 #################################################################################
 # 3_Make_and_assign_audio.py
@@ -292,19 +276,14 @@ def select_audio(location, polarity, order):
         return '{}_{}_{}.wav'.format(prefix, location, polarity)
 
 
-random_seed(918273645)
-for sheet_file_path in sheets_folder.glob('*.pkl'):
-    sheet = pd.read_pickle(sheet_file_path)
+def make_audio_sheet(sheet):
     sheet['location'] = sheet.apply(lambda x: compute_location(x.polarity, x.side), axis='columns')
-    trial_audio = (sheet
-        .apply(  # Select audio
-        lambda x: select_audio(x.location, x.polarity, x.order),
-        axis='columns')
+    return (sheet.apply(
+            # Select audio
+            lambda x: select_audio(x.location, x.polarity, x.order),
+            axis='columns')
         .to_frame(name='audio_filename')
         .join(  # Add onsets
-        audio_df.set_index('filename')[['onset']],
-        on='audio_filename')
+            disambiguating_onsets.set_index('filename')[['onset']],
+            on='audio_filename')
     )
-    audio_df_file_path = audio_dir / sheet_file_path.name
-    assert not audio_df_file_path.exists()
-    trial_audio.to_pickle(audio_df_file_path)
