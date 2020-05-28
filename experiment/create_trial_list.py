@@ -13,8 +13,7 @@ from zlib import adler32
 import numpy as np
 import pandas as pd
 from folders import individual_images_dir
-from folders import original_audio_folder, audio_folder, sheets_folder, new_audio_folder
-from pydub import AudioSegment
+from folders import sheets_folder, new_audio_folder
 
 
 def deterministic_hash(bytes_):
@@ -256,53 +255,8 @@ practice_trials.to_pickle(file_path)
 # !/usr/bin/env python
 # coding: utf-8
 
-# # Create the audio
-# The audio has been spliced and marked for the onsets of the disambiguating word manually.
-# Here we add the beeps at the onset of the disambiguating word and save a copy.
-
 disambiguating_onsets = pd.read_csv(new_audio_folder / 'polarity_first' / 'disambiguation_onsets.csv').append(
     pd.read_csv(new_audio_folder / 'polarity_last' / 'disambiguation_onsets.csv'), ignore_index=True)
-
-beeps_file_path = original_audio_folder / '..' / 'beepsrampamp.wav'
-beeps = AudioSegment.from_wav(beeps_file_path)
-
-original_audio = pd.DataFrame.from_dict(dict(file_path=new_audio_folder.glob('*/*.wav')))
-original_audio.index = original_audio.file_path.apply(lambda x: x.name)
-original_audio.index.name = 'filename'
-
-audio_df = disambiguating_onsets.join(original_audio, on='filename')
-
-
-def overlay_beeps(audio_path, onset):
-    audio = AudioSegment.from_wav(audio_path)
-
-    # Pad at the end if beeps should finish after the audio does
-    final_duration = onset + len(beeps)
-    if final_duration > len(audio):
-        audio += AudioSegment.silent(duration=(final_duration - onset), )
-
-    # "- 2" makes the beeps quiter
-    return audio.overlay(beeps - 2, onset)
-
-
-audio_df['audio'] = audio_df.apply(lambda x: (overlay_beeps(x.file_path, x.onset)), axis='columns')
-
-
-first_audio = audio_df.audio.iloc[0]
-
-
-def match_target_amplitude(sound, target_dBFS):
-    change_in_dBFS = target_dBFS - sound.dBFS
-    return sound.apply_gain(change_in_dBFS)
-
-
-audio_dir = audio_folder
-audio_dir.mkdir(exist_ok=True)
-
-for row in audio_df.itertuples():
-    output_path = audio_dir / row.filename
-    assert not output_path.exists()
-    match_target_amplitude(row.audio, first_audio.dBFS).export(output_path, format='wav')
 
 # # Determine the location that should be indicated in the sentences
 # Which row or column is indicated in the sentence.
