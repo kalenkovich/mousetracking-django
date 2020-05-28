@@ -189,13 +189,6 @@ def assign_objects(trials):
     return trials_shuffled
 
 
-# # Make sheets
-
-def make_sheet():
-    trials = make_trials()
-    return assign_objects(trials)
-
-
 # ## Training trials
 
 # Six trials:
@@ -269,5 +262,17 @@ def add_audio_info(sheet):
     sheet['location'] = sheet.apply(lambda x: compute_location(x.polarity, x.side), axis='columns')
     sheet['audio_name'] = sheet.apply(lambda x: select_audio_name(x.location, x.polarity, x.order), axis='columns')
     sheet = sheet.join(disambiguating_onsets.set_index('audio_name')[['onset']], on='audio_name')
+
+    return sheet
+
+#####################
+# Newish code
+
+
+# # Everything at once
+def make_sheet():
+    sheet = make_trials()
+    sheet = assign_objects(sheet)
+    sheet = add_audio_info(sheet)
 
     return sheet
