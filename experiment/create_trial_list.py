@@ -3,18 +3,20 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from itertools import product
 from collections import OrderedDict
-from random import choice, seed as random_seed, shuffle
-from pathlib import Path
-from zlib import adler32
 from itertools import cycle
+from itertools import product
+from random import seed as random_seed, choice
+from random import shuffle
+from zlib import adler32
 
-import pandas as pd
-import numpy as np
 import joblib
-
-from folders import sheets_folder, individual_images_dir
+import numpy as np
+import pandas as pd
+from IPython.display import HTML
+from folders import individual_images_dir
+from folders import original_audio_folder, audio_folder, sheets_folder, new_audio_folder
+from pydub import AudioSegment
 
 
 def deterministic_hash(bytes_):
@@ -319,21 +321,9 @@ for file in sorted(list(sheets_folder.glob('*.pkl'))):
 # !/usr/bin/env python
 # coding: utf-8
 
-from pathlib import Path
-from random import seed as random_seed, choice
-from itertools import product
-
-import pandas as pd
-from IPython.display import HTML
-import joblib
-
-from folders import original_audio_folder, audio_folder, sheets_folder, new_audio_folder
-
 # # Create the audio
 # The audio has been spliced and marked for the onsets of the disambiguating word manually.
 # Here we add the beeps at the onset of the disambiguating word and save a copy.
-
-from pydub import AudioSegment
 
 disambiguating_onsets = pd.read_csv(new_audio_folder / 'polarity_first' / 'disambiguation_onsets.csv').append(
     pd.read_csv(new_audio_folder / 'polarity_last' / 'disambiguation_onsets.csv'), ignore_index=True)
