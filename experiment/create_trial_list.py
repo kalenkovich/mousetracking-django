@@ -10,10 +10,8 @@ from random import seed as random_seed, choice
 from random import shuffle
 from zlib import adler32
 
-import joblib
 import numpy as np
 import pandas as pd
-from IPython.display import HTML
 from folders import individual_images_dir
 from folders import original_audio_folder, audio_folder, sheets_folder, new_audio_folder
 from pydub import AudioSegment
@@ -40,8 +38,6 @@ non_random_factors = pd.DataFrame(
     columns=non_random_factor_levels.keys(),
     index=range(1, 25)
 )
-
-non_random_factors
 
 # # Randomly assigned factors
 
@@ -75,15 +71,6 @@ def pick_configuration(object_number):
     return choice(configurations[object_number])
 
 
-random_seed(31)
-for object_number in non_random_factor_levels['object_number']:
-    print('{} objects:'.format(object_number))
-    for sample in range(4):
-        print('Sample {}:'.format(sample + 1))
-        configuration = pick_configuration(object_number)
-        print(configuration)
-    print('\n')
-
 # ## Side
 # Which row/column contains the target
 
@@ -96,13 +83,6 @@ sides = dict(
 def pick_side(orientation):
     return choice(sides[orientation])
 
-
-random_seed(57)
-for orientation in non_random_factor_levels['orientation']:
-    print('Orientaion: {}'.format(orientation))
-    for sample in range(8):
-        print(pick_side(orientation))
-    print('\n')
 
 # ## Target and lure cells
 # Both objects are selected randomly from the non-empty cells in the corresponding row/columns determined by *configuration* and *side*.
@@ -143,38 +123,12 @@ def pick_random_side():
     return choice(choice(list(sides.items()))[1])
 
 
-random_seed(32)
-for object_number in non_random_factor_levels['object_number']:
-    print('{} objects:'.format(object_number))
-    for sample in range(4):
-        print('\nSample {}:'.format(sample + 1))
-
-        configuration = pick_configuration(object_number)
-        print('configuration:')
-        print(configuration)
-
-        side = pick_random_side()
-        print('target side: {}'.format(side))
-
-        target, lure = pick_target_and_lure(side, configuration)
-        configuration = configuration.astype(str)
-        configuration[target] = '+'
-        configuration[lure] = '-'
-        print('Target (+) and lure (-)')
-        print(configuration)
-    print('\n')
-
-
 # ## Target position
 # Either left or right
 
 def pick_target_position():
     return choice(('left', 'right'))
 
-
-random_seed(31)
-for _ in range(6):
-    print(pick_target_position())
 
 # # Make all trials
 
@@ -194,11 +148,6 @@ def make_trials():
     trials.reset_index(drop=True, inplace=True)
     return trials
 
-
-random_seed(3132)
-trials = make_trials()
-np.random.seed(3132)
-trials.sample(15)
 
 # # Assign objects
 
@@ -244,10 +193,6 @@ def assign_objects(trials):
 
     return trials_shuffled
 
-
-random_seed(3132)
-np.random.seed(3132)
-assign_objects(trials).head(15)
 
 # # Make sheets
 
@@ -303,18 +248,8 @@ practice_trials = pd.merge(
     filter_,
     on=['side', 'polarity', 'object_number', 'order']
 )
-practice_trials
 
 practice_trials.to_pickle(file_path)
-
-# # Output hashes
-
-# It is not obvious what random seed to set (`np.random.seed` for `pandas` and `numpy`, `random.seed` for `random`.
-# So, to check that the results are reproducible, we calculate hashes for all the objects.
-
-for file in sorted(list(sheets_folder.glob('*.pkl'))):
-    print(file.name, joblib.hash(pd.read_pickle(file)))
-
 
 #################################################################################
 # 3_Make_and_assign_audio.py
@@ -327,19 +262,15 @@ for file in sorted(list(sheets_folder.glob('*.pkl'))):
 
 disambiguating_onsets = pd.read_csv(new_audio_folder / 'polarity_first' / 'disambiguation_onsets.csv').append(
     pd.read_csv(new_audio_folder / 'polarity_last' / 'disambiguation_onsets.csv'), ignore_index=True)
-disambiguating_onsets
 
 beeps_file_path = original_audio_folder / '..' / 'beepsrampamp.wav'
 beeps = AudioSegment.from_wav(beeps_file_path)
-beeps
 
 original_audio = pd.DataFrame.from_dict(dict(file_path=new_audio_folder.glob('*/*.wav')))
 original_audio.index = original_audio.file_path.apply(lambda x: x.name)
 original_audio.index.name = 'filename'
-original_audio
 
 audio_df = disambiguating_onsets.join(original_audio, on='filename')
-audio_df
 
 
 def overlay_beeps(audio_path, onset):
@@ -356,26 +287,6 @@ def overlay_beeps(audio_path, onset):
 
 audio_df['audio'] = audio_df.apply(lambda x: (overlay_beeps(x.file_path, x.onset)), axis='columns')
 
-
-def print_with_playable_audio(df: pd.DataFrame, audio_columns=['audio']):
-    # Remember the option before changing it
-    max_colwidth = pd.get_option('display.max_colwidth')
-
-    # Otherwise most of the tag will be replaced with ...
-    pd.set_option('display.max_colwidth', -1)
-
-    html = df.to_html(
-        escape=False,
-        formatters={audio_column: lambda a: a._repr_html_()
-                    for audio_column in audio_columns})
-
-    # Set the option back
-    pd.set_option('display.max_colwidth', max_colwidth)
-
-    return HTML(html)
-
-
-print_with_playable_audio(audio_df)
 
 first_audio = audio_df.audio.iloc[0]
 
@@ -414,15 +325,6 @@ def compute_location(polarity, side):
         return the_other[side]
 
 
-random_seed(57)
-for polarity in ('positive', 'negative'):
-    print('Polarity: {}'.format(polarity))
-    for sample in range(8):
-        random_side = choice(sides)
-        print('side: {:>10}, location: {:>10}'.format(random_side, compute_location(polarity, random_side)))
-    print('\n')
-
-
 # # Assign audio to trials
 
 def select_audio(location, polarity, order):
@@ -435,13 +337,6 @@ def select_audio(location, polarity, order):
     elif order == 'polarity_last':
         return '{}_{}_{}.wav'.format(prefix, location, polarity)
 
-
-random_seed(9182736450)
-for location, polarity, order in product(
-        ['left', 'right', 'bottom', 'top'],
-        ['positive', 'negative'],
-        ['polarity_first', 'polarity_last']):
-    print('{:<10} {:<12} {:<18}- {}'.format(location, polarity, order, select_audio(location, polarity, order)))
 
 random_seed(918273645)
 for sheet_file_path in sheets_folder.glob('*.pkl'):
@@ -459,13 +354,3 @@ for sheet_file_path in sheets_folder.glob('*.pkl'):
     audio_df_file_path = audio_dir / sheet_file_path.name
     assert not audio_df_file_path.exists()
     trial_audio.to_pickle(audio_df_file_path)
-
-# # Output hashes
-
-# It is not obvious what random seed to set (`np.random.seed` for `pandas` and `numpy`, `random.seed` for `random`.
-# So, to check that the results are reproducible, we calculate hashes for all the objects.
-#
-# It might be a good idea to check the sounds as well but, since they are not random, we'll just assume that the same code will produce the same sounds.
-
-for file in sorted(list(audio_folder.glob('*.pkl'))):
-    print(file.name, joblib.hash(pd.read_pickle(file)))
