@@ -213,13 +213,10 @@ filter_ = pd.DataFrame.from_dict(dict(
 
 random_seed(SEED + 1)
 np.random.seed(SEED + 1)
-trials = make_trials()
-sheet = assign_objects(trials)
 
-
-practice_trials = pd.merge(
+practice_sheet = pd.merge(
     # Take 1 for each combination
-    sheet.groupby(['side', 'polarity', 'object_number', 'order']).apply(lambda x: x.sample(1)).reset_index(drop=True),
+    make_sheet().groupby(['side', 'polarity', 'object_number', 'order']).apply(lambda x: x.sample(1)).reset_index(drop=True),
     # Inner-join with the required combination
     filter_,
     on=['side', 'polarity', 'object_number', 'order']
