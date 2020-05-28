@@ -13,7 +13,7 @@ from zlib import adler32
 import numpy as np
 import pandas as pd
 from folders import individual_images_dir
-from folders import sheets_folder, new_audio_folder
+from folders import new_audio_folder
 
 
 def deterministic_hash(bytes_):
@@ -116,12 +116,6 @@ def pick_target_and_lure(side, configuration):
         pick_random_object(the_other[side], configuration))
 
 
-def pick_random_side():
-    # Used for demonstration purposes only
-    # First choice selects between rows and columns, the second one - between two corresponding sides.
-    return choice(choice(list(sides.items()))[1])
-
-
 # ## Target position
 # Either left or right
 
@@ -216,7 +210,6 @@ filter_ = pd.DataFrame.from_dict(dict(
     object_number=[2, 3, 4, 3, 4, 2],
     order=['polarity_last', 'polarity_last', 'polarity_first', 'polarity_last', 'polarity_first', 'polarity_first']
 ))
-filter_
 
 random_seed(SEED + 1)
 np.random.seed(SEED + 1)
@@ -224,7 +217,6 @@ trials = make_trials()
 sheet = assign_objects(trials)
 
 
-np.random.seed(SEED + 1)
 practice_trials = pd.merge(
     # Take 1 for each combination
     sheet.groupby(['side', 'polarity', 'object_number', 'order']).apply(lambda x: x.sample(1)).reset_index(drop=True),
