@@ -264,14 +264,9 @@ def select_audio(location, polarity, order):
         return '{}_{}_{}.wav'.format(prefix, location, polarity)
 
 
-def make_audio_sheet(sheet):
+def add_audio_info(sheet):
     sheet['location'] = sheet.apply(lambda x: compute_location(x.polarity, x.side), axis='columns')
-    return (sheet.apply(
-            # Select audio
-            lambda x: select_audio(x.location, x.polarity, x.order),
-            axis='columns')
-        .to_frame(name='audio_filename')
-        .join(  # Add onsets
-            disambiguating_onsets.set_index('filename')[['onset']],
-            on='audio_filename')
-    )
+    sheet['audio_name'] = sheet.apply(lambda x: select_audio_name(x.location, x.polarity, x.order), axis='columns')
+    sheet = sheet.join(disambiguating_onsets.set_index('filename')[['onset']], on='audio_name')
+
+    return sheet
