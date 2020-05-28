@@ -189,33 +189,6 @@ def assign_objects(trials):
     return trials_shuffled
 
 
-# ## Training trials
-
-# Six trials:
-# - left, affirmative, 2 objects, polarity_last
-# - top, negative, 3 objects, polarity_last,
-# - left, negative, 4 objects, polarity_first
-# - bottom, positive, 3 objects, polarity_last
-# - right, positive, 4 objects, polarity_first
-# - right, negative, 2 objects, polarity_first
-
-filter_ = pd.DataFrame.from_dict(dict(
-    side=['left', 'top', 'left', 'bottom', 'right', 'right'],
-    polarity=['positive', 'negative', 'negative', 'positive', 'positive', 'negative'],
-    object_number=[2, 3, 4, 3, 4, 2],
-    order=['polarity_last', 'polarity_last', 'polarity_first', 'polarity_last', 'polarity_first', 'polarity_first']
-))
-
-
-practice_sheet = pd.merge(
-    # Take 1 for each combination
-    make_sheet().groupby(['side', 'polarity', 'object_number', 'order']).apply(lambda x: x.sample(1)).reset_index(drop=True),
-    # Inner-join with the required combination
-    filter_,
-    on=['side', 'polarity', 'object_number', 'order']
-)
-
-
 #################################################################################
 # 3_Make_and_assign_audio.py
 # !/usr/bin/env python
@@ -276,3 +249,30 @@ def make_sheet():
     sheet = add_audio_info(sheet)
 
     return sheet
+
+
+# # Practice sheet
+
+# Six trials:
+# - left, affirmative, 2 objects, polarity_last
+# - top, negative, 3 objects, polarity_last,
+# - left, negative, 4 objects, polarity_first
+# - bottom, positive, 3 objects, polarity_last
+# - right, positive, 4 objects, polarity_first
+# - right, negative, 2 objects, polarity_first
+
+filter_ = pd.DataFrame.from_dict(dict(
+    side=['left', 'top', 'left', 'bottom', 'right', 'right'],
+    polarity=['positive', 'negative', 'negative', 'positive', 'positive', 'negative'],
+    object_number=[2, 3, 4, 3, 4, 2],
+    order=['polarity_last', 'polarity_last', 'polarity_first', 'polarity_last', 'polarity_first', 'polarity_first']
+))
+
+practice_sheet = pd.merge(
+    # Take 1 for each combination
+    make_sheet().groupby(['side', 'polarity', 'object_number', 'order']).apply(lambda x: x.sample(1)).reset_index(
+        drop=True),
+    # Inner-join with the required combination
+    filter_,
+    on=['side', 'polarity', 'object_number', 'order']
+)
