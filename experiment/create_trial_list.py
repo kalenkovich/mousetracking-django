@@ -231,6 +231,7 @@ practice_sheet = pd.merge(
 app_dir = Path(experiment.__file__).parent
 disambiguating_onsets = pd.read_csv(app_dir / 'disambiguation-onsets_polarity-first.csv').append(
     pd.read_csv(app_dir / 'disambiguation-onsets_polarity-last.csv'), ignore_index=True)
+disambiguating_onsets['audio_name'] = disambiguating_onsets.filename.str.replace('.wav', '')
 
 # # Determine the location that should be indicated in the sentences
 # Which row or column is indicated in the sentence.
@@ -253,20 +254,20 @@ def compute_location(polarity, side):
 
 # # Assign audio to trials
 
-def select_audio(location, polarity, order):
+def select_audio_name(location, polarity, order):
     """
     Return the name of the audio file that should be played in a trial
     """
     prefix = choice(('this-time', 'in-this-picture'))
     if order == 'polarity_first':
-        return '{}_{}_{}.wav'.format(prefix, polarity, location)
+        return '{}_{}_{}'.format(prefix, polarity, location)
     elif order == 'polarity_last':
-        return '{}_{}_{}.wav'.format(prefix, location, polarity)
+        return '{}_{}_{}'.format(prefix, location, polarity)
 
 
 def add_audio_info(sheet):
     sheet['location'] = sheet.apply(lambda x: compute_location(x.polarity, x.side), axis='columns')
     sheet['audio_name'] = sheet.apply(lambda x: select_audio_name(x.location, x.polarity, x.order), axis='columns')
-    sheet = sheet.join(disambiguating_onsets.set_index('filename')[['onset']], on='audio_name')
+    sheet = sheet.join(disambiguating_onsets.set_index('audio_name')[['onset']], on='audio_name')
 
     return sheet
