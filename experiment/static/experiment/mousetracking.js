@@ -14,6 +14,7 @@ const mousetracking = {
         const coordinates = {
             x: fake_cursor.position.x,
             y: fake_cursor.position.y,
+            t: new Date(),
             width: $(window).width(),
             height: $(window).height()
         };
