@@ -1,0 +1,17 @@
+filename,disambiguating_word,duration,till_end,onset
+in-this-picture_negative_bottom.wav,v-nizhney,2511,1103,1408
+in-this-picture_negative_left.wav,v-levoy,2492,1084,1408
+in-this-picture_negative_right.wav,v-pravoy,2582,1175,1407
+in-this-picture_negative_top.wav,v-verkhney,2568,1161,1407
+in-this-picture_positive_bottom.wav,v-nizhney,2512,1066,1446
+in-this-picture_positive_left.wav,v-levoy,2493,1047,1446
+in-this-picture_positive_right.wav,v-pravoy,2583,1138,1445
+in-this-picture_positive_top.wav,v-verkhney,2569,1124,1445
+this-time_negative_bottom.wav,v-nizhney,2226,1103,1123
+this-time_negative_left.wav,v-levoy,2207,1084,1123
+this-time_negative_right.wav,v-pravoy,2298,1175,1123
+this-time_negative_top.wav,v-verkhney,2284,1161,1123
+this-time_positive_bottom.wav,v-nizhney,2226,1066,1160
+this-time_positive_left.wav,v-levoy,2207,1047,1160
+this-time_positive_right.wav,v-pravoy,2297,1138,1159
+this-time_positive_top.wav,v-verkhney,2283,1124,1159

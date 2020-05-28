@@ -1,0 +1,17 @@
+filename,disambiguating_word,duration,till_end,onset
+in-this-picture_bottom_negative.wav,chego-nyet,2405,690,1715
+in-this-picture_bottom_positive.wav,chto-yest,2404,741,1663
+in-this-picture_left_negative.wav,chego-nyet,2404,690,1714
+in-this-picture_left_positive.wav,chto-yest,2403,741,1662
+in-this-picture_right_negative.wav,chego-nyet,2405,690,1715
+in-this-picture_right_positive.wav,chto-yest,2404,741,1663
+in-this-picture_top_negative.wav,chego-nyet,2404,690,1714
+in-this-picture_top_positive.wav,chto-yest,2404,741,1663
+this-time_bottom_negative.wav,chego-nyet,2132,690,1442
+this-time_bottom_positive.wav,chto-yest,2131,741,1390
+this-time_left_negative.wav,chego-nyet,2131,690,1441
+this-time_left_positive.wav,chto-yest,2131,741,1390
+this-time_right_negative.wav,chego-nyet,2132,690,1442
+this-time_right_positive.wav,chto-yest,2131,741,1390
+this-time_top_negative.wav,chego-nyet,2132,690,1442
+this-time_top_positive.wav,chto-yest,2131,741,1390
