@@ -213,8 +213,6 @@ filter_ = pd.DataFrame.from_dict(dict(
     order=['polarity_last', 'polarity_last', 'polarity_first', 'polarity_last', 'polarity_first', 'polarity_first']
 ))
 
-random_seed(SEED + 1)
-np.random.seed(SEED + 1)
 
 practice_sheet = pd.merge(
     # Take 1 for each combination
@@ -244,8 +242,6 @@ the_other = {
     'top': 'bottom',
     'bottom': 'top'
 }
-
-sides = list(the_other.keys())
 
 
 def compute_location(polarity, side):
