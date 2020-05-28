@@ -230,8 +230,9 @@ practice_sheet = pd.merge(
 # !/usr/bin/env python
 # coding: utf-8
 
-disambiguating_onsets = pd.read_csv(new_audio_folder / 'polarity_first' / 'disambiguation_onsets.csv').append(
-    pd.read_csv(new_audio_folder / 'polarity_last' / 'disambiguation_onsets.csv'), ignore_index=True)
+app_dir = Path(experiment.__file__).parent
+disambiguating_onsets = pd.read_csv(app_dir / 'disambiguation-onsets_polarity-first.csv').append(
+    pd.read_csv(app_dir / 'disambiguation-onsets_polarity-last.csv'), ignore_index=True)
 
 # # Determine the location that should be indicated in the sentences
 # Which row or column is indicated in the sentence.
