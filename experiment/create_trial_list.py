@@ -9,11 +9,13 @@ from itertools import product
 from random import seed as random_seed, choice
 from random import shuffle
 from zlib import adler32
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from folders import individual_images_dir
-from folders import new_audio_folder
+
+from .models import Image
+import experiment
 
 
 def deterministic_hash(bytes_):
@@ -147,7 +149,7 @@ def make_trials():
 # Load object names
 
 non_object_images = ('frame', 'empty')
-objects = [image.stem for image in individual_images_dir.glob('*.png') if image.stem not in non_object_images]
+objects = [image.name for image in Image.objects.all() if image.name not in non_object_images]
 objects = sorted(objects)
 
 # Remove certain objects
