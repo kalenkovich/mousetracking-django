@@ -14,6 +14,7 @@ const mousetracking = {
         const coordinates = {
             x: fake_cursor.position.x,
             y: fake_cursor.position.y,
+            t: new Date(),
             width: $(window).width(),
             height: $(window).height()
         };
@@ -56,6 +57,8 @@ const mousetracking = {
 
     release_cursor: function () {
         console.log('Released the cursor');
+        // Save a point now, so that we have a first point when the cursor is released, not when the mouse first moves
+        mousetracking.add_current_coordinates();
         fake_cursor.release(mousetracking.add_current_coordinates);
     }
 
