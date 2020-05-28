@@ -6,16 +6,16 @@
 from collections import OrderedDict
 from itertools import cycle
 from itertools import product
-from random import seed as random_seed, choice
+from pathlib import Path
+from random import seed as set_random_seed, choice
 from random import shuffle
 from zlib import adler32
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from .models import Image
 import experiment
+from .models import Image
 
 
 def deterministic_hash(bytes_):
@@ -243,7 +243,11 @@ def add_audio_info(sheet):
 
 
 # # Everything at once
-def make_sheet():
+def make_stimulus_list(random_seed=None):
+    if random_seed:
+        set_random_seed(random_seed)
+        np.random.seed(random_seed)
+
     sheet = make_trials()
     sheet = assign_objects(sheet)
     sheet = add_audio_info(sheet)
@@ -270,9 +274,10 @@ filter_ = pd.DataFrame.from_dict(dict(
 
 practice_sheet = pd.merge(
     # Take 1 for each combination
-    make_sheet().groupby(['side', 'polarity', 'object_number', 'order']).apply(lambda x: x.sample(1)).reset_index(
-        drop=True),
-    # Inner-join with the required combination
+    make_stimulus_list(random_seed=0)
+        .groupby(['side', 'polarity', 'object_number', 'order'])
+        .first(),
+    # Inner-join with the required combinations
     filter_,
     on=['side', 'polarity', 'object_number', 'order']
 )
