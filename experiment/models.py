@@ -26,7 +26,7 @@ class Participant(models.Model):
     is_done = models.BooleanField(default=False)
 
     @classmethod
-    def get_participant(cls, request):
+    def get_or_create_participant(cls, request) -> 'Participant':
         # This will create the session instance if it does not exist yet
         if not request.session.session_key:
             request.session.save()
