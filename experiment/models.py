@@ -1,6 +1,8 @@
 import uuid
+from random import randint
 
 import pandas as pd
+import numpy as np
 
 from django.db import models
 from django.utils import timezone
@@ -8,9 +10,14 @@ from django.templatetags.static import static
 from django.contrib.sessions.models import Session
 
 
+def create_random_seed():
+    return randint(1, 1e6)
+
+
 class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
+    random_seed = models.IntegerField(default=create_random_seed, null=True)
 
     is_test = models.BooleanField(default=False)
 
@@ -26,8 +33,7 @@ class Participant(models.Model):
             return session.participant
         except Session.participant.RelatedObjectDoesNotExist:
             participant = cls.objects.create(session=session)
-            # TODO: change to test=False once creating trial lists is properly implemented
-            participant.create_trials(test=True)
+            participant.create_trials(test=False)
             return participant
 
     def get_next_trial(self):
@@ -44,8 +50,8 @@ class Participant(models.Model):
     def create_trials(self, test=False):
         experiment_list = self.create_trial_list(test=test)
 
+        trials = list()
         for number, row in enumerate(experiment_list.itertuples(), 1):
-            print(row)
             trial = Trial(participant=self, number=number)
 
             trial.frame_top_left = Image.get_if_exists(name=row.frame[0][0])
@@ -60,15 +66,45 @@ class Participant(models.Model):
             trial.audio = Audio.objects.get(name=row.audio_name)
             trial.hold_duration = row.hold_duration
 
-            trial.save()
+            trials.append(trial)
 
-    @classmethod
-    def create_trial_list(cls, test=False) -> pd.DataFrame:
+        Trial.objects.bulk_create(trials)
+
+    def create_trial_list(self, test=False) -> pd.DataFrame:
         if not test:
-            # TODO: make a random experiment list, set get_participant to use test=False once done
-            raise NotImplementedError
+            # I import here to allow myself to have circular imports. This is a big no-no but I can't figure out how
+            # to structure it better.
+            from .create_trial_list import make_stimulus_list
+
+            trial_list = make_stimulus_list(random_seed=self.random_seed)
+
+            # The data format has to be adapted a bit from the offline version.
+            # This is some awful code below and it might have been better to change the original code but that would
+            # make it less compatible with the offline version.
+
+            def make_frame(configuration, objects):
+                frame = [[None, None], [None, None]]
+                for r, c, object_ in zip(*np.where(configuration), objects):
+                    frame[r][c] = object_
+                return frame
+            trial_list['frame'] = trial_list.apply(lambda row: make_frame(row.configuration, row.objects),
+                                                   axis='columns')
+            trial_list['frame_duration'] = trial_list.objects.apply(len) * 750  # 750 ms per object
+
+            trial_list['target'] = trial_list.apply(lambda row: row.frame[row.target_cell[0]][row.target_cell[1]],
+                                                    axis='columns')
+            trial_list['lure'] = trial_list.apply(lambda row: row.frame[row.lure_cell[0]][row.lure_cell[1]],
+                                                  axis='columns')
+            trial_list['response_option_left'] = trial_list.target.where(trial_list.target_position == 'left',
+                                                                         trial_list.lure)
+            trial_list['response_option_right'] = trial_list.target.where(trial_list.target_position == 'right',
+                                                                          trial_list.lure)
+
+            trial_list.rename(columns={'onset': 'hold_duration'}, inplace=True)
+
+            return trial_list
         else:
-            return cls.create_test_trial_list()
+            return self.create_test_trial_list()
 
     @staticmethod
     def create_test_trial_list():
