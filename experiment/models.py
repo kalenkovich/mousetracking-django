@@ -1,17 +1,24 @@
 import uuid
 from random import randint
+from enum import Enum
 
-import pandas as pd
 import numpy as np
-
-from django.db import models
-from django.utils import timezone
-from django.templatetags.static import static
+import pandas as pd
 from django.contrib.sessions.models import Session
+from django.db import models
+from django.templatetags.static import static
+from django.utils import timezone
 
 
 def create_random_seed():
     return randint(1, 1e6)
+
+
+class Stages(object):
+    welcome = 'welcome'
+    before_block = 'before_block'
+    in_block = 'in_block'
+    goodbye = 'goodbye'
 
 
 class Participant(models.Model):
@@ -19,12 +26,14 @@ class Participant(models.Model):
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
     random_seed = models.IntegerField(default=create_random_seed, null=True)
 
+    stage = models.CharField(max_length=80)
+
     is_test = models.BooleanField(default=False)
 
     is_done = models.BooleanField(default=False)
 
     @classmethod
-    def get_participant(cls, request):
+    def get_or_create_participant(cls, request) -> 'Participant':
         # This will create the session instance if it does not exist yet
         if not request.session.session_key:
             request.session.save()
@@ -119,6 +128,21 @@ class Participant(models.Model):
                 [[['flask', 'medal'], ['axe', None]], 2250, 'axe', 'medal', 'this-time_negative_right', 1123],
                 [[[None, 'acorn'], ['flask', 'medal']], 2250, 'acorn', 'flask', 'this-time_positive_bottom', 1160],
             ])
+
+    def determine_stage(self, page_just_seen):
+
+        if self.stage == '':
+            self.stage = Stages.welcome
+        elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
+            self.stage = Stages.before_block
+        elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
+            self.stage = Stages.in_block
+        else:
+            # Setting "before_block" and "goodbye" stages is handles by the `get_settings` view
+            pass
+
+        self.save()
+        return self.stage
 
 
 class Trial(models.Model):

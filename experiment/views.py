@@ -3,23 +3,31 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from .models import Participant, Trial
+from .models import Participant, Trial, Stages
 
 
 def router(request):
     """
     This view routes to all the other ones depending on the stage the participant is at
     """
-    participant = Participant.get_participant(request)
+    participant = Participant.get_or_create_participant(request)
+    stage = participant.determine_stage(page_just_seen=request.GET.get('just_saw'))
 
-    if participant.is_done:
+    if stage == Stages.welcome:
+        return welcome(request)
+
+    if stage == Stages.before_block:
+        return before_block(request)
+
+    if stage == Stages.in_block:
+        return mousetracking(request)
+
+    if stage == Stages.goodbye:
         return goodbye(request)
 
-    saw_welcome = request.COOKIES.get("saw-welcome")
-    if not saw_welcome:
-        return welcome(request)
-    else:
-        return mousetracking(request)
+
+def before_block(request):
+    return render(request, 'experiment/block.html')
 
 
 def welcome(request):
@@ -39,7 +47,7 @@ def ajax_redirect():
 
 
 def get_new_trial_settings(request, participant: Participant = None):
-    participant: Participant = participant or Participant.get_participant(request)
+    participant: Participant = participant or Participant.get_or_create_participant(request)
     trial: Trial = participant.get_next_trial()
     if trial:
         trial_settings = trial.get_settings()
@@ -54,7 +62,7 @@ def get_new_trial_settings(request, participant: Participant = None):
 
 def save_trial_results(request):
     results = json.loads(request.body.decode('utf-8')).get('results')
-    participant: Participant = Participant.get_participant(request)
+    participant: Participant = Participant.get_or_create_participant(request)
     trial: Trial = participant.get_last_sent_trial()
 
     # Trial might be None if another participant is using the same browser by clearing cookies without clearing local
