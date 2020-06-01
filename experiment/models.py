@@ -50,8 +50,8 @@ class Participant(models.Model):
     def create_trials(self, test=False):
         experiment_list = self.create_trial_list(test=test)
 
+        trials = list()
         for number, row in enumerate(experiment_list.itertuples(), 1):
-            print(row)
             trial = Trial(participant=self, number=number)
 
             trial.frame_top_left = Image.get_if_exists(name=row.frame[0][0])
@@ -66,7 +66,9 @@ class Participant(models.Model):
             trial.audio = Audio.objects.get(name=row.audio_name)
             trial.hold_duration = row.hold_duration
 
-            trial.save()
+            trials.append(trial)
+
+        Trial.objects.bulk_create(trials)
 
     def create_trial_list(self, test=False) -> pd.DataFrame:
         if not test:
