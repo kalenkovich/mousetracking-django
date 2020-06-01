@@ -129,13 +129,13 @@ class Participant(models.Model):
                 [[[None, 'acorn'], ['flask', 'medal']], 2250, 'acorn', 'flask', 'this-time_positive_bottom', 1160],
             ])
 
-    def determine_stage(self, cookies):
+    def determine_stage(self, page_just_seen):
 
         if self.stage == '':
             self.stage = Stages.welcome
-        elif self.stage == Stages.welcome and "saw-{}".format(Stages.welcome) in cookies:
+        elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
             self.stage = Stages.before_block
-        elif self.stage == Stages.before_block and "saw-{}".format(Stages.before_block) in cookies:
+        elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
         else:
             # Setting "before_block" and "goodbye" stages is handles by the `get_settings` view

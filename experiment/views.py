@@ -11,7 +11,7 @@ def router(request):
     This view routes to all the other ones depending on the stage the participant is at
     """
     participant = Participant.get_or_create_participant(request)
-    stage = participant.determine_stage(cookies=request.COOKIES)
+    stage = participant.determine_stage(page_just_seen=request.GET.get('just_saw'))
 
     if stage == Stages.welcome:
         return welcome(request)
