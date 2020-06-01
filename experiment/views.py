@@ -3,7 +3,7 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 
-from .models import Participant, Trial
+from .models import Participant, Trial, Stages
 
 
 def router(request):
@@ -11,15 +11,23 @@ def router(request):
     This view routes to all the other ones depending on the stage the participant is at
     """
     participant = Participant.get_or_create_participant(request)
+    stage = participant.determine_stage(cookies=request.COOKIES)
 
-    if participant.is_done:
+    if stage == Stages.welcome:
+        return welcome(request)
+
+    if stage == Stages.before_block:
+        return before_block(request)
+
+    if stage == Stages.in_block:
+        return mousetracking(request)
+
+    if stage == Stages.goodbye:
         return goodbye(request)
 
-    saw_welcome = request.COOKIES.get("saw-welcome")
-    if not saw_welcome:
-        return welcome(request)
-    else:
-        return mousetracking(request)
+
+def before_block(request):
+    return render(request, 'experiment/block.html')
 
 
 def welcome(request):
