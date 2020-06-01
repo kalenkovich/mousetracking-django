@@ -19,6 +19,8 @@ class Participant(models.Model):
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
     random_seed = models.IntegerField(default=create_random_seed, null=True)
 
+    stage = models.CharField(max_length=80)
+
     is_test = models.BooleanField(default=False)
 
     is_done = models.BooleanField(default=False)

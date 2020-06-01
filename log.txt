@@ -133,3 +133,12 @@ python manage.py migrate experiment
 # Add `random_seed` field to the `Participant` model
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Figure out what to show based on the stage a participant is currently at
+# Add `stage` to the `Participant` model
+python manage.py makemigrations experiment
+# When asked how to populate the `stage` field for the existing entries, provide a one-off default (option 1) -
+# "goodbye"
+1
+'goodbye'
+python manage.py migrate experiment
