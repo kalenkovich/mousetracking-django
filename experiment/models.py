@@ -1,4 +1,5 @@
 import uuid
+from random import randint
 
 import pandas as pd
 
@@ -8,9 +9,14 @@ from django.templatetags.static import static
 from django.contrib.sessions.models import Session
 
 
+def create_random_seed():
+    return randint(1, 1e6)
+
+
 class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
+    random_seed = models.IntegerField(default=create_random_seed, null=True)
 
     is_test = models.BooleanField(default=False)
 

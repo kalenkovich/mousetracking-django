@@ -128,3 +128,8 @@ python manage.py migrate experiment
 # Add a unique identifier to the Trial model
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Use random stimulus lists
+# Add `random_seed` field to the `Participant` model
+python manage.py makemigrations experiment
+python manage.py migrate experiment
