@@ -2,6 +2,7 @@ import uuid
 from random import randint
 
 import pandas as pd
+import numpy as np
 
 from django.db import models
 from django.utils import timezone
@@ -32,8 +33,7 @@ class Participant(models.Model):
             return session.participant
         except Session.participant.RelatedObjectDoesNotExist:
             participant = cls.objects.create(session=session)
-            # TODO: change to test=False once creating trial lists is properly implemented
-            participant.create_trials(test=True)
+            participant.create_trials(test=False)
             return participant
 
     def get_next_trial(self):
@@ -68,13 +68,41 @@ class Participant(models.Model):
 
             trial.save()
 
-    @classmethod
-    def create_trial_list(cls, test=False) -> pd.DataFrame:
+    def create_trial_list(self, test=False) -> pd.DataFrame:
         if not test:
-            # TODO: make a random experiment list, set get_participant to use test=False once done
-            raise NotImplementedError
+            # I import here to allow myself to have circular imports. This is a big no-no but I can't figure out how
+            # to structure it better.
+            from .create_trial_list import make_stimulus_list
+
+            trial_list = make_stimulus_list(random_seed=self.random_seed)
+
+            # The data format has to be adapted a bit from the offline version.
+            # This is some awful code below and it might have been better to change the original code but that would
+            # make it less compatible with the offline version.
+
+            def make_frame(configuration, objects):
+                frame = [[None, None], [None, None]]
+                for r, c, object_ in zip(*np.where(configuration), objects):
+                    frame[r][c] = object_
+                return frame
+            trial_list['frame'] = trial_list.apply(lambda row: make_frame(row.configuration, row.objects),
+                                                   axis='columns')
+            trial_list['frame_duration'] = trial_list.objects.apply(len) * 750  # 750 ms per object
+
+            trial_list['target'] = trial_list.apply(lambda row: row.frame[row.target_cell[0]][row.target_cell[1]],
+                                                    axis='columns')
+            trial_list['lure'] = trial_list.apply(lambda row: row.frame[row.lure_cell[0]][row.lure_cell[1]],
+                                                  axis='columns')
+            trial_list['response_option_left'] = trial_list.target.where(trial_list.target_position == 'left',
+                                                                         trial_list.lure)
+            trial_list['response_option_right'] = trial_list.target.where(trial_list.target_position == 'right',
+                                                                          trial_list.lure)
+
+            trial_list.rename(columns={'onset': 'hold_duration'}, inplace=True)
+
+            return trial_list
         else:
-            return cls.create_test_trial_list()
+            return self.create_test_trial_list()
 
     @staticmethod
     def create_test_trial_list():
