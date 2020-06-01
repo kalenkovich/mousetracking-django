@@ -45,11 +45,15 @@ class Participant(models.Model):
             participant.create_trials(test=False)
             return participant
 
-    def get_next_trial(self):
+    def get_next_trial(self, about_to_be_sent=False):
         next_trial = self.trial_set.filter(sent=False).order_by('number').first()
         if not next_trial:
             self.is_done = True
             self.save()
+        else:
+            if about_to_be_sent is True:
+                next_trial.sent = True
+                next_trial.save()
 
         return next_trial
 

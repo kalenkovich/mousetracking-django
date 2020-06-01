@@ -48,13 +48,11 @@ def ajax_redirect():
 
 def get_new_trial_settings(request, participant: Participant = None):
     participant: Participant = participant or Participant.get_or_create_participant(request)
-    trial: Trial = participant.get_next_trial()
+    trial: Trial = participant.get_next_trial(about_to_be_sent=True)
     if trial:
         trial_settings = trial.get_settings()
         trial_settings['type'] = 'trial_settings'
         trial_settings['trial_id'] = trial.unique_id
-        trial.sent = True
-        trial.save()
         return JsonResponse(data=trial_settings)
     else:
         return ajax_redirect()
