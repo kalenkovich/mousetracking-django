@@ -59,6 +59,9 @@ const trial = {
         if (data.type === 'trial_settings') {
             trial.update_settings(data);
         } else if (data.type === 'redirect') {
+            // Reloading will result in exiting fullscreen and pointer unlocking. We should not reaact to those.
+            fullscreen.onFullscreenExit = () => {};  // do nothing
+            mousetracking.onPointerUnlock = () => {};  // do nothing
             window.location.href = window.location.href;
         }
     },
