@@ -11,7 +11,7 @@ def router(request):
     This view routes to all the other ones depending on the stage the participant is at
     """
     participant = Participant.get_or_create_participant(request)
-    stage = participant.determine_stage(page_just_seen=request.GET.get('just_saw'))
+    stage = participant.determine_stage(page_just_seen=request.POST.get('just_saw'))
 
     if stage == Stages.welcome:
         return welcome(request)
@@ -27,11 +27,11 @@ def router(request):
 
 
 def before_block(request):
-    return render(request, 'experiment/block.html')
+    return render(request, 'experiment/block.html', context=dict(stage=Stages.before_block))
 
 
 def welcome(request):
-    return render(request, 'experiment/welcome.html')
+    return render(request, 'experiment/welcome.html', context=dict(stage=Stages.welcome))
 
 
 def mousetracking(request):

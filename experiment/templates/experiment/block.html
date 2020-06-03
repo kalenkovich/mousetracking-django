@@ -1,6 +1,8 @@
 Block of trials is about to begin.
 <div>
-    <a href="?just_saw=before_block">
-        Continue
-    </a>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="just_saw" value="{{stage}}">
+      <input type="submit" value="Continue">
+    </form>
 </div>
