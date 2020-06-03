@@ -35,7 +35,7 @@ class Participant(models.Model):
     # `get_next_trial`
     next_block_number = models.IntegerField(default=1)
     # Total number of blocks. Populated once in `create_trials`
-    n_blocks = models.IntegerField()
+    n_blocks = models.IntegerField(null=True)
 
     is_test = models.BooleanField(default=False)
 

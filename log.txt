@@ -152,3 +152,6 @@ python manage.py makemigrations experiment
 1
 9
 python manage.py migrate experiment
+# Make `n_blocks` nullable
+python manage.py makemigrations experiment
+python manage.py migrate experiment
