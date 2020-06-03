@@ -107,10 +107,7 @@ const trial = {
         trial.add_all();
         trial.get_settings()
             .then(trial.promise_to_load_all)
-            .then(() => {
-                trial.results.trial_id = trial.trial_id;
-                start_button.show();
-            });
+            .then(start_button.show);
         fullscreen.onFullscreenExit = trial.abort;
         fullscreen.enforce_fullscreen();
     },
@@ -148,6 +145,7 @@ const trial = {
 
     run: function () {
         trial.has_been_run = true;
+        trial.results.trial_id = trial.trial_id;
         // show frame
         frame.show();
         trial.results.dt_frame_presented = get_current_time();
