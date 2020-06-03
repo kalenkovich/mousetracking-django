@@ -21,6 +21,8 @@ TRIALS_PER_BLOCK_TEST = 2
 
 class Stages(object):
     welcome = 'welcome'
+    before_training = 'before_training'
+    in_training = 'in_training'
     before_block = 'before_block'
     in_block = 'in_block'
     goodbye = 'goodbye'
@@ -52,23 +54,33 @@ class Participant(models.Model):
             return session.participant
         except Session.participant.RelatedObjectDoesNotExist:
             participant = cls.objects.create(session=session)
-            participant.create_trials(test=False)
+            participant.create_trials(test=False, kind=Trial.TRAINING)
+            participant.create_trials(test=False, kind=Trial.EXPERIMENT)
             return participant
 
     def get_next_trial(self, about_to_be_sent=False):
-        if not self.stage == Stages.in_block:
-            return None  # We don't give a next trial unless we are inside a block
+        if self.stage == Stages.in_block:
+            trial_kind = Trial.EXPERIMENT
+        elif self.stage == Stages.in_training:
+            trial_kind = Trial.TRAINING
+        else:
+            return None  # We don't give a next trial unless we are inside a block or in training
 
-        next_trial = self.trial_set.filter(sent=False).order_by('number').first()  # type: Trial
+        next_trial = self.trial_set.filter(kind=trial_kind, sent=False).order_by('number').first()  # type: Trial
+
         if not next_trial:
-            self.is_done = True
+            # If we are out of experiment trials, we are done
+            if trial_kind == Trial.EXPERIMENT:
+                self.is_done = True
+            elif trial_kind == Trial.TRAINING:
+                self.stage = Stages.before_block
             self.save()
             return None
 
         if about_to_be_sent is True:
             next_trial.sent = True
             next_trial.save()
-            if next_trial.is_last_in_block():
+            if trial_kind == Trial.EXPERIMENT and next_trial.is_last_in_block():
                 self.stage = Stages.before_block
                 self.next_block_number = next_trial.block_number + 1
                 self.save()
@@ -78,12 +90,12 @@ class Participant(models.Model):
     def get_last_sent_trial(self):
         return self.trial_set.filter(sent=True).order_by('number').last()
 
-    def create_trials(self, test=False):
-        experiment_list = self.create_trial_list(test=test)
+    def create_trials(self, kind, test=False):
+        trial_list = self.create_trial_list(kind=kind, test=test)
 
         trials = list()
-        for number, row in enumerate(experiment_list.itertuples(), 1):
-            trial = Trial(participant=self, number=number)
+        for number, row in enumerate(trial_list.itertuples(), 1):
+            trial = Trial(participant=self, number=number, kind=kind)
 
             trial.frame_top_left = Image.get_if_exists(name=row.frame[0][0])
             trial.frame_top_right = Image.get_if_exists(name=row.frame[0][1])
@@ -101,16 +113,19 @@ class Participant(models.Model):
 
         Trial.objects.bulk_create(trials)
 
-        self.n_blocks = ceil(len(experiment_list) / self.trials_per_block)
+        self.n_blocks = ceil(len(trial_list) / self.trials_per_block)
         self.save()
 
-    def create_trial_list(self, test=False) -> pd.DataFrame:
+    def create_trial_list(self, kind, test=False) -> pd.DataFrame:
         if not test:
             # I import here to allow myself to have circular imports. This is a big no-no but I can't figure out how
             # to structure it better.
-            from .create_trial_list import make_stimulus_list
+            from .create_trial_list import make_stimulus_list, practice_sheet
 
-            trial_list = make_stimulus_list(random_seed=self.random_seed)
+            if kind == Trial.EXPERIMENT:
+                trial_list = make_stimulus_list(random_seed=self.random_seed)
+            elif kind == Trial.TRAINING:
+                trial_list = practice_sheet
 
             # The data format has to be adapted a bit from the offline version.
             # This is some awful code below and it might have been better to change the original code but that would
@@ -159,9 +174,12 @@ class Participant(models.Model):
         if self.stage == '':
             self.stage = Stages.welcome
         elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
-            self.stage = Stages.before_block
+            self.stage = Stages.before_training
+        elif self.stage == Stages.before_training and page_just_seen == Stages.before_training:
+            self.stage = Stages.in_training
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
+
         else:
             # Setting "before_block" and "goodbye" stages is handled by the `get_next_trial` method
             pass
@@ -184,6 +202,17 @@ class Trial(models.Model):
     number = models.IntegerField()
 
     participant = models.ForeignKey(Participant, on_delete=models.PROTECT)
+
+    TRAINING = 'TR'
+    EXPERIMENT = 'EXP'
+    KIND_CHOICES = [
+        (TRAINING, 'training'),
+        (EXPERIMENT, 'experiment'),
+    ]
+    kind = models.CharField(
+        max_length=3,
+        choices=KIND_CHOICES,
+    )
 
     # Have we sent this trial to the participant already
     sent = models.BooleanField(default=False)

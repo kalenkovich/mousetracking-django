@@ -16,6 +16,12 @@ def router(request):
     if stage == Stages.welcome:
         return welcome(request)
 
+    if stage == Stages.before_training:
+        return training(request)
+
+    if stage == Stages.in_training:
+        return mousetracking(request)
+
     if stage == Stages.before_block:
         return before_block(request, block_number=participant.next_block_number, n_blocks=participant.n_blocks)
 
@@ -42,6 +48,10 @@ def mousetracking(request):
 
 def goodbye(request):
     return render(request, 'experiment/goodbye.html')
+
+
+def training(request):
+    return render(request, 'experiment/training.html', context=dict(stage=Stages.before_training))
 
 
 def ajax_redirect():
