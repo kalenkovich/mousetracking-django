@@ -1,5 +1,6 @@
 import uuid
 from random import randint
+from math import ceil
 from enum import Enum
 
 import numpy as np
@@ -100,7 +101,7 @@ class Participant(models.Model):
 
         Trial.objects.bulk_create(trials)
 
-        self.n_blocks = len(experiment_list)
+        self.n_blocks = ceil(len(experiment_list) / self.trials_per_block)
         self.save()
 
     def create_trial_list(self, test=False) -> pd.DataFrame:
