@@ -14,6 +14,10 @@ def create_random_seed():
     return randint(1, 1e6)
 
 
+TRIALS_PER_BLOCK = 32
+TRIALS_PER_BLOCK_TEST = 2
+
+
 class Stages(object):
     welcome = 'welcome'
     before_block = 'before_block'
@@ -46,14 +50,21 @@ class Participant(models.Model):
             return participant
 
     def get_next_trial(self, about_to_be_sent=False):
-        next_trial = self.trial_set.filter(sent=False).order_by('number').first()
+        if not self.stage == Stages.in_block:
+            return None  # We don't give a next trial unless we are inside a block
+
+        next_trial = self.trial_set.filter(sent=False).order_by('number').first()  # type: Trial
         if not next_trial:
             self.is_done = True
             self.save()
-        else:
-            if about_to_be_sent is True:
-                next_trial.sent = True
-                next_trial.save()
+            return None
+
+        if about_to_be_sent is True:
+            next_trial.sent = True
+            next_trial.save()
+            if next_trial.is_last_in_block():
+                self.stage = Stages.before_block
+                self.save()
 
         return next_trial
 
@@ -142,11 +153,18 @@ class Participant(models.Model):
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
         else:
-            # Setting "before_block" and "goodbye" stages is handles by the `get_settings` view
+            # Setting "before_block" and "goodbye" stages is handled by the `get_next_trial` method
             pass
 
         self.save()
         return self.stage
+
+    @property
+    def trials_per_block(self):
+        if not self.is_test:
+            return TRIALS_PER_BLOCK
+        else:
+            return TRIALS_PER_BLOCK_TEST
 
 
 class Trial(models.Model):
@@ -205,6 +223,9 @@ class Trial(models.Model):
             trajectory=results['trajectory'],
         )
         trial_results.save()
+
+    def is_last_in_block(self):
+        return self.number % self.participant.trials_per_block == 0
 
 
 class TrialResults(models.Model):
