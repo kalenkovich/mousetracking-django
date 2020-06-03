@@ -17,7 +17,7 @@ def router(request):
         return welcome(request)
 
     if stage == Stages.before_block:
-        return before_block(request)
+        return before_block(request, block_number=participant.next_block_number, n_blocks=participant.n_blocks)
 
     if stage == Stages.in_block:
         return mousetracking(request)
@@ -26,8 +26,10 @@ def router(request):
         return goodbye(request)
 
 
-def before_block(request):
-    return render(request, 'experiment/block.html', context=dict(stage=Stages.before_block))
+def before_block(request, block_number, n_blocks):
+    return render(request, 'experiment/block.html', context=dict(stage=Stages.before_block,
+                                                                 block_number=block_number,
+                                                                 n_blocks=n_blocks))
 
 
 def welcome(request):
