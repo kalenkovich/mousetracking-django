@@ -69,6 +69,7 @@ class Participant(models.Model):
             next_trial.save()
             if next_trial.is_last_in_block():
                 self.stage = Stages.before_block
+                self.next_block_number = next_trial.block_number + 1
                 self.save()
 
         return next_trial
@@ -98,6 +99,9 @@ class Participant(models.Model):
             trials.append(trial)
 
         Trial.objects.bulk_create(trials)
+
+        self.n_blocks = len(experiment_list)
+        self.save()
 
     def create_trial_list(self, test=False) -> pd.DataFrame:
         if not test:
@@ -231,6 +235,12 @@ class Trial(models.Model):
 
     def is_last_in_block(self):
         return self.number % self.participant.trials_per_block == 0
+
+    @property
+    def block_number(self):
+        # "self.number - 1" because the trial numbering starts with 1
+        # " + 1" because "//" gives the number of full blocks before this trial
+        return (self.number - 1) // self.participant.trials_per_block + 1
 
 
 class TrialResults(models.Model):
