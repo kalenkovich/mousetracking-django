@@ -59,7 +59,7 @@ const trial = {
         if (data.type === 'trial_settings') {
             trial.update_settings(data);
         } else if (data.type === 'redirect') {
-            location.reload();
+            window.location.href = window.location.href;
         }
     },
 
