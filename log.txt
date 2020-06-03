@@ -155,3 +155,11 @@ python manage.py migrate experiment
 # Make `n_blocks` nullable
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Add training
+# Add `kind` field to the Trial model
+python manage.py makemigrations experiment
+# When asked how to populate the `kind` field for the existing entries, provide a one-off default (option 1) - 'EXPERIMENT'
+1
+'EXPERIMENT'
+python manage.py migrate experiment

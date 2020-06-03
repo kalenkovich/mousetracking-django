@@ -185,6 +185,17 @@ class Trial(models.Model):
 
     participant = models.ForeignKey(Participant, on_delete=models.PROTECT)
 
+    TRAINING = 'TR'
+    EXPERIMENT = 'EXP'
+    KIND_CHOICES = [
+        (TRAINING, 'training'),
+        (EXPERIMENT, 'experiment'),
+    ]
+    kind = models.CharField(
+        max_length=3,
+        choices=KIND_CHOICES,
+    )
+
     # Have we sent this trial to the participant already
     sent = models.BooleanField(default=False)
 
