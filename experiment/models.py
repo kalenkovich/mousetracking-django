@@ -54,7 +54,8 @@ class Participant(models.Model):
             return session.participant
         except Session.participant.RelatedObjectDoesNotExist:
             participant = cls.objects.create(session=session)
-            participant.create_trials(test=False)
+            participant.create_trials(test=False, kind=Trial.TRAINING)
+            participant.create_trials(test=False, kind=Trial.EXPERIMENT)
             return participant
 
     def get_next_trial(self, about_to_be_sent=False):
@@ -89,12 +90,12 @@ class Participant(models.Model):
     def get_last_sent_trial(self):
         return self.trial_set.filter(sent=True).order_by('number').last()
 
-    def create_trials(self, test=False):
-        experiment_list = self.create_trial_list(test=test)
+    def create_trials(self, kind, test=False):
+        trial_list = self.create_trial_list(kind=kind, test=test)
 
         trials = list()
-        for number, row in enumerate(experiment_list.itertuples(), 1):
-            trial = Trial(participant=self, number=number)
+        for number, row in enumerate(trial_list.itertuples(), 1):
+            trial = Trial(participant=self, number=number, kind=kind)
 
             trial.frame_top_left = Image.get_if_exists(name=row.frame[0][0])
             trial.frame_top_right = Image.get_if_exists(name=row.frame[0][1])
@@ -112,16 +113,19 @@ class Participant(models.Model):
 
         Trial.objects.bulk_create(trials)
 
-        self.n_blocks = ceil(len(experiment_list) / self.trials_per_block)
+        self.n_blocks = ceil(len(trial_list) / self.trials_per_block)
         self.save()
 
-    def create_trial_list(self, test=False) -> pd.DataFrame:
+    def create_trial_list(self, kind, test=False) -> pd.DataFrame:
         if not test:
             # I import here to allow myself to have circular imports. This is a big no-no but I can't figure out how
             # to structure it better.
-            from .create_trial_list import make_stimulus_list
+            from .create_trial_list import make_stimulus_list, practice_sheet
 
-            trial_list = make_stimulus_list(random_seed=self.random_seed)
+            if kind == Trial.EXPERIMENT:
+                trial_list = make_stimulus_list(random_seed=self.random_seed)
+            elif kind == Trial.TRAINING:
+                trial_list = practice_sheet
 
             # The data format has to be adapted a bit from the offline version.
             # This is some awful code below and it might have been better to change the original code but that would
