@@ -31,6 +31,11 @@ class Participant(models.Model):
     random_seed = models.IntegerField(default=create_random_seed, null=True)
 
     stage = models.CharField(max_length=80)
+    # The number of the block that the next trail belongs too. Updated when we get to the last trial in block in
+    # `get_next_trial`
+    next_block_number = models.IntegerField(default=1)
+    # Total number of blocks. Populated once in `create_trials`
+    n_blocks = models.IntegerField()
 
     is_test = models.BooleanField(default=False)
 
