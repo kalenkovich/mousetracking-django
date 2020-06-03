@@ -11,13 +11,13 @@ def router(request):
     This view routes to all the other ones depending on the stage the participant is at
     """
     participant = Participant.get_or_create_participant(request)
-    stage = participant.determine_stage(page_just_seen=request.GET.get('just_saw'))
+    stage = participant.determine_stage(page_just_seen=request.POST.get('just_saw'))
 
     if stage == Stages.welcome:
         return welcome(request)
 
     if stage == Stages.before_block:
-        return before_block(request)
+        return before_block(request, block_number=participant.next_block_number, n_blocks=participant.n_blocks)
 
     if stage == Stages.in_block:
         return mousetracking(request)
@@ -26,12 +26,14 @@ def router(request):
         return goodbye(request)
 
 
-def before_block(request):
-    return render(request, 'experiment/block.html')
+def before_block(request, block_number, n_blocks):
+    return render(request, 'experiment/block.html', context=dict(stage=Stages.before_block,
+                                                                 block_number=block_number,
+                                                                 n_blocks=n_blocks))
 
 
 def welcome(request):
-    return render(request, 'experiment/welcome.html')
+    return render(request, 'experiment/welcome.html', context=dict(stage=Stages.welcome))
 
 
 def mousetracking(request):
@@ -48,13 +50,11 @@ def ajax_redirect():
 
 def get_new_trial_settings(request, participant: Participant = None):
     participant: Participant = participant or Participant.get_or_create_participant(request)
-    trial: Trial = participant.get_next_trial()
+    trial: Trial = participant.get_next_trial(about_to_be_sent=True)
     if trial:
         trial_settings = trial.get_settings()
         trial_settings['type'] = 'trial_settings'
         trial_settings['trial_id'] = trial.unique_id
-        trial.sent = True
-        trial.save()
         return JsonResponse(data=trial_settings)
     else:
         return ajax_redirect()

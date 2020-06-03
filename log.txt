@@ -142,3 +142,16 @@ python manage.py makemigrations experiment
 1
 'goodbye'
 python manage.py migrate experiment
+
+## Separate trials into blocks
+# Add the logic to get_next_trial
+## Add block number to the page shown between blocks
+# Add `next_block_number` and `n_blocks` fields to `Participant`
+python manage.py makemigrations experiment
+# When asked how to populate the `n_blocks` field for the existing entries, provide a one-off default (option 1) - 9
+1
+9
+python manage.py migrate experiment
+# Make `n_blocks` nullable
+python manage.py makemigrations experiment
+python manage.py migrate experiment

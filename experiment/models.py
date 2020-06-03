@@ -1,5 +1,6 @@
 import uuid
 from random import randint
+from math import ceil
 from enum import Enum
 
 import numpy as np
@@ -12,6 +13,10 @@ from django.utils import timezone
 
 def create_random_seed():
     return randint(1, 1e6)
+
+
+TRIALS_PER_BLOCK = 32
+TRIALS_PER_BLOCK_TEST = 2
 
 
 class Stages(object):
@@ -27,6 +32,11 @@ class Participant(models.Model):
     random_seed = models.IntegerField(default=create_random_seed, null=True)
 
     stage = models.CharField(max_length=80)
+    # The number of the block that the next trail belongs too. Updated when we get to the last trial in block in
+    # `get_next_trial`
+    next_block_number = models.IntegerField(default=1)
+    # Total number of blocks. Populated once in `create_trials`
+    n_blocks = models.IntegerField(null=True)
 
     is_test = models.BooleanField(default=False)
 
@@ -45,11 +55,23 @@ class Participant(models.Model):
             participant.create_trials(test=False)
             return participant
 
-    def get_next_trial(self):
-        next_trial = self.trial_set.filter(sent=False).order_by('number').first()
+    def get_next_trial(self, about_to_be_sent=False):
+        if not self.stage == Stages.in_block:
+            return None  # We don't give a next trial unless we are inside a block
+
+        next_trial = self.trial_set.filter(sent=False).order_by('number').first()  # type: Trial
         if not next_trial:
             self.is_done = True
             self.save()
+            return None
+
+        if about_to_be_sent is True:
+            next_trial.sent = True
+            next_trial.save()
+            if next_trial.is_last_in_block():
+                self.stage = Stages.before_block
+                self.next_block_number = next_trial.block_number + 1
+                self.save()
 
         return next_trial
 
@@ -78,6 +100,9 @@ class Participant(models.Model):
             trials.append(trial)
 
         Trial.objects.bulk_create(trials)
+
+        self.n_blocks = ceil(len(experiment_list) / self.trials_per_block)
+        self.save()
 
     def create_trial_list(self, test=False) -> pd.DataFrame:
         if not test:
@@ -138,11 +163,18 @@ class Participant(models.Model):
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
         else:
-            # Setting "before_block" and "goodbye" stages is handles by the `get_settings` view
+            # Setting "before_block" and "goodbye" stages is handled by the `get_next_trial` method
             pass
 
         self.save()
         return self.stage
+
+    @property
+    def trials_per_block(self):
+        if not self.is_test:
+            return TRIALS_PER_BLOCK
+        else:
+            return TRIALS_PER_BLOCK_TEST
 
 
 class Trial(models.Model):
@@ -201,6 +233,15 @@ class Trial(models.Model):
             trajectory=results['trajectory'],
         )
         trial_results.save()
+
+    def is_last_in_block(self):
+        return self.number % self.participant.trials_per_block == 0
+
+    @property
+    def block_number(self):
+        # "self.number - 1" because the trial numbering starts with 1
+        # " + 1" because "//" gives the number of full blocks before this trial
+        return (self.number - 1) // self.participant.trials_per_block + 1
 
 
 class TrialResults(models.Model):
