@@ -21,6 +21,8 @@ TRIALS_PER_BLOCK_TEST = 2
 
 class Stages(object):
     welcome = 'welcome'
+    before_training = 'before_training'
+    in_training = 'in_training'
     before_block = 'before_block'
     in_block = 'in_block'
     goodbye = 'goodbye'
@@ -56,19 +58,28 @@ class Participant(models.Model):
             return participant
 
     def get_next_trial(self, about_to_be_sent=False):
-        if not self.stage == Stages.in_block:
-            return None  # We don't give a next trial unless we are inside a block
+        if self.stage == Stages.in_block:
+            trial_kind = Trial.EXPERIMENT
+        elif self.stage == Stages.in_training:
+            trial_kind = Trial.TRAINING
+        else:
+            return None  # We don't give a next trial unless we are inside a block or in training
 
-        next_trial = self.trial_set.filter(sent=False).order_by('number').first()  # type: Trial
+        next_trial = self.trial_set.filter(kind=trial_kind, sent=False).order_by('number').first()  # type: Trial
+
         if not next_trial:
-            self.is_done = True
+            # If we are out of experiment trials, we are done
+            if trial_kind == Trial.EXPERIMENT:
+                self.is_done = True
+            elif trial_kind == Trial.TRAINING:
+                self.stage = Stages.before_block
             self.save()
             return None
 
         if about_to_be_sent is True:
             next_trial.sent = True
             next_trial.save()
-            if next_trial.is_last_in_block():
+            if trial_kind == Trial.EXPERIMENT and next_trial.is_last_in_block():
                 self.stage = Stages.before_block
                 self.next_block_number = next_trial.block_number + 1
                 self.save()
@@ -159,9 +170,12 @@ class Participant(models.Model):
         if self.stage == '':
             self.stage = Stages.welcome
         elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
-            self.stage = Stages.before_block
+            self.stage = Stages.before_training
+        elif self.stage == Stages.before_training and page_just_seen == Stages.before_training:
+            self.stage = Stages.in_training
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
+
         else:
             # Setting "before_block" and "goodbye" stages is handled by the `get_next_trial` method
             pass
