@@ -6,6 +6,7 @@ from enum import Enum
 import numpy as np
 import pandas as pd
 from django.contrib.sessions.models import Session
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
@@ -21,6 +22,8 @@ TRIALS_PER_BLOCK_TEST = 2
 
 class Stages(object):
     welcome = 'welcome'
+    participant_form = 'participant_form'
+    form_filled = 'form_filled'
     before_training = 'before_training'
     in_training = 'in_training'
     before_block = 'before_block'
@@ -32,6 +35,23 @@ class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
     random_seed = models.IntegerField(default=create_random_seed, null=True)
+
+    FEMALE = 'F'
+    MALE = 'M'
+    OTHER = '?'
+    SEX_CHOICES = [
+        (FEMALE, 'женский'),
+        (MALE, 'мужской'),
+        (OTHER, 'другой вариант')
+    ]
+    sex = models.CharField(
+        max_length=1,
+        choices=SEX_CHOICES,
+    )
+
+    age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
+
+    gave_consent = models.BooleanField(default=False)
 
     stage = models.CharField(max_length=80)
     # The number of the block that the next trail belongs too. Updated when we get to the last trial in block in
@@ -174,6 +194,10 @@ class Participant(models.Model):
         if self.stage == '':
             self.stage = Stages.welcome
         elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
+            self.stage = Stages.participant_form
+        elif self.stage == Stages.participant_form:
+            pass  # advancing from participant_form stage is done when the form is saved
+        elif self.stage == Stages.form_filled:
             self.stage = Stages.before_training
         elif self.stage == Stages.before_training and page_just_seen == Stages.before_training:
             self.stage = Stages.in_training
@@ -193,6 +217,11 @@ class Participant(models.Model):
             return TRIALS_PER_BLOCK
         else:
             return TRIALS_PER_BLOCK_TEST
+
+    def save_data_from_form(self, form):
+        form.save()
+        self.stage = Stages.form_filled
+        self.save()
 
 
 class Trial(models.Model):

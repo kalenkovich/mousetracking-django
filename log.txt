@@ -163,3 +163,22 @@ python manage.py makemigrations experiment
 1
 'EXPERIMENT'
 python manage.py migrate experiment
+
+## Add participant form
+# Added `age`, `sex`, `gave_consent` to the `Participant` model
+# When making a migration, used 'F' as default for `sex` and 18 - for `age`. `gave_consent` has a default (False)
+python manage.py makemigrations experiment
+# default for `age`
+1
+18
+# default for `sex`
+1
+'F'
+# migrate
+python manage.py migrate experiment
+# Make `age` nullable
+python manage.py makemigrations experiment
+python manage.py migrate experiment
+# Add "other" as sex
+python manage.py makemigrations experiment
+python manage.py migrate experiment

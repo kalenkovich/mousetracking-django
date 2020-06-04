@@ -1,8 +1,10 @@
 import json
 
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.urls import reverse
 
+from .forms import ParticipantForm
 from .models import Participant, Trial, Stages
 
 
@@ -15,6 +17,9 @@ def router(request):
 
     if stage == Stages.welcome:
         return welcome(request)
+
+    if stage == Stages.participant_form:
+        return participant_form(request, participant=participant)
 
     if stage == Stages.before_training:
         return training(request)
@@ -97,3 +102,24 @@ def save_trial_results(request):
                 pass
 
     return get_new_trial_settings(request, participant=participant)
+
+
+def participant_form(request, participant=None):
+    participant = participant or Participant.get_or_create_participant(request)
+
+    if request.method == 'POST':
+        form = ParticipantForm(request.POST, instance=participant)
+
+        if form.is_valid():
+            participant.save_data_from_form(form)
+            return HttpResponseRedirect(reverse('router'))
+
+    else:
+        form = ParticipantForm(instance=participant)
+
+    context = {
+        'form': form,
+        'participant': participant,
+    }
+
+    return render(request, 'experiment/participant_form.html', context)
