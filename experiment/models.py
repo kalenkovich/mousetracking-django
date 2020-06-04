@@ -22,6 +22,8 @@ TRIALS_PER_BLOCK_TEST = 2
 
 class Stages(object):
     welcome = 'welcome'
+    participant_form = 'participant_form'
+    form_filled = 'form_filled'
     before_training = 'before_training'
     in_training = 'in_training'
     before_block = 'before_block'
@@ -190,6 +192,10 @@ class Participant(models.Model):
         if self.stage == '':
             self.stage = Stages.welcome
         elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
+            self.stage = Stages.participant_form
+        elif self.stage == Stages.participant_form:
+            pass  # advancing from participant_form stage is done when the form is saved
+        elif self.stage == Stages.form_filled:
             self.stage = Stages.before_training
         elif self.stage == Stages.before_training and page_just_seen == Stages.before_training:
             self.stage = Stages.in_training
