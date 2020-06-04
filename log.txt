@@ -176,3 +176,6 @@ python manage.py makemigrations experiment
 'F'
 # migrate
 python manage.py migrate experiment
+# Make `age` nullable
+python manage.py makemigrations experiment
+python manage.py migrate experiment

@@ -45,7 +45,7 @@ class Participant(models.Model):
         choices=SEX_CHOICES,
     )
 
-    age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+    age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
 
     gave_consent = models.BooleanField(default=False)
 
