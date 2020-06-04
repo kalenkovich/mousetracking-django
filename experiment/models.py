@@ -6,6 +6,7 @@ from enum import Enum
 import numpy as np
 import pandas as pd
 from django.contrib.sessions.models import Session
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.templatetags.static import static
 from django.utils import timezone
@@ -32,6 +33,21 @@ class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
     random_seed = models.IntegerField(default=create_random_seed, null=True)
+
+    FEMALE = 'F'
+    MALE = 'M'
+    SEX_CHOICES = [
+        (FEMALE, 'женский'),
+        (MALE, 'мужской'),
+    ]
+    sex = models.CharField(
+        max_length=1,
+        choices=SEX_CHOICES,
+    )
+
+    age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+
+    gave_consent = models.BooleanField(default=False)
 
     stage = models.CharField(max_length=80)
     # The number of the block that the next trail belongs too. Updated when we get to the last trial in block in
