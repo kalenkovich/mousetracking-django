@@ -1,0 +1,46 @@
+{% load static from staticfiles %}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/base.css" %}">
+</head>
+
+<body style="margin-left:5%; margin-top:2%;">
+
+Please fill the form below.
+
+<div style="display:flex">
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <label for="{{ form.message.id_for_label }}">Age:</label>
+            {{ form.age }}
+        </div>
+
+        <div class="form-row">
+            <label for="{{ form.message.id_for_label }}">Sex:</label>
+            {{ form.sex }}
+        </div>
+
+        <div class="text">
+            <h2>Informed consent</h2>
+        </div>
+
+        <div class="form-row">
+            <br>
+            By checking the box below, I confirm that I consent to participating in the experiment.
+            <br>
+
+            {{ form.gave_consent }}
+            <label for="{{ form.message.id_for_label }}">I confirm</label>
+        </div>
+
+
+
+        <div class="submit-row">
+            <input type="submit" value="Continue">
+        </div>
+    </form>
+</div>
+</body>

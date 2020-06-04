@@ -216,6 +216,11 @@ class Participant(models.Model):
         else:
             return TRIALS_PER_BLOCK_TEST
 
+    def save_data_from_form(self, form):
+        form.save()
+        self.stage = Stages.form_filled
+        self.save()
+
 
 class Trial(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
