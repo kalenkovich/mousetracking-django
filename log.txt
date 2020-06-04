@@ -179,3 +179,6 @@ python manage.py migrate experiment
 # Make `age` nullable
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+# Add "other" as sex
+python manage.py makemigrations experiment
+python manage.py migrate experiment

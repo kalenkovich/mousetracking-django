@@ -38,9 +38,11 @@ class Participant(models.Model):
 
     FEMALE = 'F'
     MALE = 'M'
+    OTHER = '?'
     SEX_CHOICES = [
         (FEMALE, 'женский'),
         (MALE, 'мужской'),
+        (OTHER, 'другой вариант')
     ]
     sex = models.CharField(
         max_length=1,
