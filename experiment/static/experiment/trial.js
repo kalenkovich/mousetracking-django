@@ -47,10 +47,19 @@ const trial = {
         return JSON.parse(localStorage.getItem('trial_id'));
     },
 
+    set correct_response(value) {
+        localStorage.setItem('correct_response', JSON.stringify(value));
+    },
+
+    get correct_response() {
+        return JSON.parse(localStorage.getItem('correct_response'));
+    },
+
     update_settings: function (data) {
         trial.uris = data.uris;
         trial.timing = data.timing;
         trial.trial_id = data.trial_id;
+        trial.correct_response = data.correct_response;
         trial.has_been_run = false;
     },
     // end of trial info stuff
@@ -117,6 +126,7 @@ const trial = {
         audio.add();
         response_options.add();
         start_button.add();
+        feedback.add();
     },
 
     promise_to_load_all: function () {
@@ -132,6 +142,7 @@ const trial = {
         // audio.stop();
         response_options.hide();
         start_button.hide();
+        feedback.hide();
     },
 
     start: function () {
@@ -187,7 +198,10 @@ const trial = {
         // send the results to the server
         mousetracking.stop_tracking();
         trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
-        trial.send_results().then(trial.promise_to_load_all).then(start_button.show);
+        Promise.all([
+            feedback.show_and_hide_promise(trial.correct_response),
+            trial.send_results().then(trial.promise_to_load_all)]
+        ).then(start_button.show);
     },
 
     debug: function () {
@@ -427,5 +441,73 @@ start_button = {
     hide: function () {
         $('#start-button').css('visibility', 'hidden');
     },
+
+};
+
+const feedback = {
+    duration: 500,
+
+    id: 'feedback-msg',
+
+    add: function () {
+        if ($('#' + feedback.id).length) {
+            return
+        }
+
+        const div = document.createElement('div');
+        div.className = 'center-of-the-screen';
+        div.id = feedback.id;
+        div.style.height = "auto";
+        div.style.width = "20vw";
+        div.style.fontSize = "10vh";
+        // Center text horizontally and vertically
+        div.style.textAlign = "center";
+        div.style.verticalAlign = "middle";
+        div.style.lineHeight = div.style.height;
+
+        // Add a border
+        div.style.borderWidth = "5px";
+        div.style.borderStyle = 'solid';
+
+        // Add solid background
+        div.style.backgroundColor = 'white';
+        div.style.visibility = 'hidden';
+        document.body.appendChild(div);
+    },
+
+    show: function (correct_response) {
+        const div = $('#' + feedback.id).get(0);
+        if (trial.results.selected_response == correct_response){
+            div.innerHTML = 'Correct!';
+            div.style.borderColor = 'green';
+        } else {
+            div.innerHTML = 'That was incorrect, unfortunately';
+            div.style.borderColor = 'red';
+        }
+        div.style.visibility = 'visible';
+    },
+
+    hide: function () {
+        const div = $('#' + feedback.id).get(0);
+        div.style.visibility = 'hidden';
+    },
+
+    show_and_hide_promise: function(correct_response) {
+        return new Promise((resolve) => {
+            window.setTimeout(
+            function () {
+                feedback.show(correct_response);
+                window.setTimeout(
+                    function () {
+                        // show options and release the cursor
+                        feedback.hide();
+                        resolve();
+                    },
+                    feedback.duration)
+            },
+
+            100)
+        })
+    }
 
 };

@@ -160,6 +160,7 @@ class Participant(models.Model):
 
             trial.response_option_left = Image.objects.get(name=row.response_option_left)
             trial.response_option_right = Image.objects.get(name=row.response_option_right)
+            trial.correct_response = row.target_position
 
             trial.audio = Audio.objects.get(name=row.audio_name)
             trial.hold_duration = row.hold_duration
@@ -290,6 +291,14 @@ class Trial(models.Model):
     # Time before the options are presented and the cursor is released
     hold_duration = models.IntegerField()
 
+    LEFT = 'L'
+    RIGHT = 'R'
+    CORRECT_RESPONSE_CHOICES = [
+        (LEFT, 'left'),
+        (RIGHT, 'right')
+    ]
+    correct_response = models.CharField(max_length=1, choices=CORRECT_RESPONSE_CHOICES)
+
     def get_settings(self):
         frame_images_uris = [
             static(self.frame_top_left.uri) if self.frame_top_left else None,
@@ -302,7 +311,7 @@ class Trial(models.Model):
                     audio=static(self.audio.uri),
                     frame_images=frame_images_uris)
         timing = dict(frame=1500, audio=1160)
-        return dict(uris=uris, timing=timing)
+        return dict(uris=uris, timing=timing, correct_response=self.correct_response)
 
     def save_results(self, results):
         trial_results = TrialResults(

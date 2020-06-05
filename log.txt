@@ -196,3 +196,13 @@ python manage.py makemigrations experiment
 y
 # migrate
 python manage.py migrate experiment
+
+# Add feedback
+## Save which option is the correct option when creating trials
+### Add `correct_response` field to the Trial model
+python manage.py makemigrations experiment
+# Use 'R' to populate the existing trials
+1
+'R'
+# migrate
+python manage.py migrate experiment
