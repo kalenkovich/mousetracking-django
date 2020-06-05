@@ -310,7 +310,7 @@ class Trial(models.Model):
                     right=static(self.response_option_right.uri),
                     audio=static(self.audio.uri),
                     frame_images=frame_images_uris)
-        timing = dict(frame=1500, audio=1160)
+        timing = dict(frame=self.frame_duration, audio=self.hold_duration)
         return dict(uris=uris, timing=timing, correct_response=self.correct_response)
 
     def save_results(self, results):
