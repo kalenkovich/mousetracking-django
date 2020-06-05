@@ -66,18 +66,28 @@ class Participant(models.Model):
     is_done = models.BooleanField(default=False)
 
     @classmethod
-    def get_or_create_participant(cls, request) -> 'Participant':
+    def get_session(cls, request) -> Session:
         # This will create the session instance if it does not exist yet
         if not request.session.session_key:
             request.session.save()
-        session = Session.objects.get(session_key=request.session.session_key)
+        return Session.objects.get(session_key=request.session.session_key)
+
+    @classmethod
+    def get_participant(cls, request) -> 'Participant':
+        session = cls.get_session(request)
         try:
             return session.participant
         except Session.participant.RelatedObjectDoesNotExist:
-            participant = cls.objects.create(session=session)
+            return None
+
+    @classmethod
+    def get_or_create_participant(cls, request) -> 'Participant':
+        participant = cls.get_participant(request)
+        if not participant:
+            participant = cls.objects.create(session=cls.get_session(request))
             participant.create_trials(test=False, kind=Trial.TRAINING)
             participant.create_trials(test=False, kind=Trial.EXPERIMENT)
-            return participant
+        return participant
 
     def get_next_trial(self, about_to_be_sent=False):
         if self.stage == Stages.in_block:
