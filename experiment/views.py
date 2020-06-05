@@ -8,11 +8,11 @@ from .forms import ParticipantForm
 from .models import Participant, Trial, Stages
 
 
-def router(request):
+def router(request, is_test):
     """
     This view routes to all the other ones depending on the stage the participant is at
     """
-    participant = Participant.get_or_create_participant(request)
+    participant = Participant.get_or_create_participant(request, is_test=is_test)
     stage = participant.determine_stage(page_just_seen=request.POST.get('just_saw'))
 
     if stage == Stages.welcome:
@@ -64,7 +64,7 @@ def ajax_redirect():
 
 
 def get_new_trial_settings(request, participant: Participant = None):
-    participant: Participant = participant or Participant.get_or_create_participant(request)
+    participant: Participant = participant or Participant.get_participant(request)
     trial: Trial = participant.get_next_trial(about_to_be_sent=True)
     if trial:
         trial_settings = trial.get_settings()
@@ -77,7 +77,7 @@ def get_new_trial_settings(request, participant: Participant = None):
 
 def save_trial_results(request):
     results = json.loads(request.body.decode('utf-8')).get('results')
-    participant: Participant = Participant.get_or_create_participant(request)
+    participant: Participant = Participant.get_participant(request)
     trial: Trial = participant.get_last_sent_trial()
 
     # Trial might be None if another participant is using the same browser by clearing cookies without clearing local
@@ -105,14 +105,17 @@ def save_trial_results(request):
 
 
 def participant_form(request, participant=None):
-    participant = participant or Participant.get_or_create_participant(request)
+    participant = participant or Participant.get_participant(request)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get('form_name') == 'ParticipantForm':
         form = ParticipantForm(request.POST, instance=participant)
 
         if form.is_valid():
             participant.save_data_from_form(form)
-            return HttpResponseRedirect(reverse('router'))
+            if not participant.is_test:
+                return HttpResponseRedirect(reverse('router'))
+            else:
+                return HttpResponseRedirect(reverse('router_test'))
 
     else:
         form = ParticipantForm(instance=participant)
