@@ -199,7 +199,10 @@ const trial = {
         // send the results to the server
         mousetracking.stop_tracking();
         trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
-        trial.send_results().then(trial.promise_to_load_all).then(start_button.show);
+        Promise.all([
+            trial.send_results().then(trial.promise_to_load_all),
+            feedback.show_and_hide_promise()]
+        ).then(start_button.show);
     },
 
     debug: function () {
@@ -489,5 +492,24 @@ const feedback = {
         const div = $('#' + feedback.id).get(0);
         div.style.visibility = 'hidden';
     },
+
+    show_and_hide_promise: function() {
+        return new Promise((resolve) => {
+            window.setTimeout(
+            function () {
+                // hide frame, start playing audio
+                feedback.show();
+                window.setTimeout(
+                    function () {
+                        // show options and release the cursor
+                        feedback.hide();
+                        resolve();
+                    },
+                    feedback.duration)
+            },
+
+            100)
+        })
+    }
 
 };
