@@ -160,6 +160,7 @@ class Participant(models.Model):
 
             trial.response_option_left = Image.objects.get(name=row.response_option_left)
             trial.response_option_right = Image.objects.get(name=row.response_option_right)
+            trial.correct_response = row.target_position
 
             trial.audio = Audio.objects.get(name=row.audio_name)
             trial.hold_duration = row.hold_duration
