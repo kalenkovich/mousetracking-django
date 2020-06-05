@@ -47,10 +47,20 @@ const trial = {
         return JSON.parse(localStorage.getItem('trial_id'));
     },
 
+    set correct_response(value) {
+        localStorage.setItem('correct_response', JSON.stringify(value));
+    },
+
+    get correct_response() {
+        return 'left';
+        // return JSON.parse(localStorage.getItem('correct_response'));
+    },
+
     update_settings: function (data) {
         trial.uris = data.uris;
         trial.timing = data.timing;
         trial.trial_id = data.trial_id;
+        trial.correct_response = data.correct_response;
         trial.has_been_run = false;
     },
     // end of trial info stuff
