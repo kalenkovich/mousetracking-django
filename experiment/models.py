@@ -25,6 +25,7 @@ class Stages(object):
     welcome = 'welcome'
     participant_form = 'participant_form'
     form_filled = 'form_filled'
+    instructions = 'instructions'
     before_training = 'before_training'
     in_training = 'in_training'
     before_block = 'before_block'
@@ -222,6 +223,8 @@ class Participant(models.Model):
         elif self.stage == Stages.participant_form:
             pass  # advancing from participant_form stage is done when the form is saved
         elif self.stage == Stages.form_filled:
+            self.stage = Stages.instructions
+        elif self.stage == Stages.instructions and page_just_seen == Stages.instructions:
             self.stage = Stages.before_training
         elif self.stage == Stages.before_training and page_just_seen == Stages.before_training:
             self.stage = Stages.in_training

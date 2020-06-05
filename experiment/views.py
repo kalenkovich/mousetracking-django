@@ -21,6 +21,9 @@ def router(request, is_test):
     if stage == Stages.participant_form:
         return participant_form(request, participant=participant)
 
+    if stage == Stages.instructions:
+        return instructions(request)
+
     if stage == Stages.before_training:
         return training(request)
 
@@ -57,6 +60,10 @@ def goodbye(request):
 
 def training(request):
     return render(request, 'experiment/training.html', context=dict(stage=Stages.before_training))
+
+
+def instructions(request):
+    return render(request, 'experiment/instructions.html', context=dict(stage=Stages.instructions))
 
 
 def ajax_redirect():
