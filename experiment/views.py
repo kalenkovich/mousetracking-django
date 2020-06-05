@@ -107,12 +107,15 @@ def save_trial_results(request):
 def participant_form(request, participant=None):
     participant = participant or Participant.get_participant(request)
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get('form_name') == 'ParticipantForm':
         form = ParticipantForm(request.POST, instance=participant)
 
         if form.is_valid():
             participant.save_data_from_form(form)
-            return HttpResponseRedirect(reverse('router'))
+            if not participant.is_test:
+                return HttpResponseRedirect(reverse('router'))
+            else:
+                return HttpResponseRedirect(reverse('router_test'))
 
     else:
         form = ParticipantForm(instance=participant)
