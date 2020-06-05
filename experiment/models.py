@@ -18,6 +18,7 @@ def create_random_seed():
 
 TRIALS_PER_BLOCK = 32
 TRIALS_PER_BLOCK_TEST = 2
+N_BLOCKS_TEST = 2
 
 
 class Stages(object):
@@ -81,12 +82,28 @@ class Participant(models.Model):
             return None
 
     @classmethod
-    def get_or_create_participant(cls, request) -> 'Participant':
+    def get_or_create_participant(cls, request, is_test) -> 'Participant':
         participant = cls.get_participant(request)
+
+        # In case there is already a participant created and now we want to use a test one. Or vice versa.
+        if participant and participant.is_test != is_test:
+            participant.session = None
+            participant.save()
+            participant = None
+
+        # Create a new one if necessary
         if not participant:
-            participant = cls.objects.create(session=cls.get_session(request))
-            participant.create_trials(test=False, kind=Trial.TRAINING)
-            participant.create_trials(test=False, kind=Trial.EXPERIMENT)
+            participant = cls.objects.create(session=cls.get_session(request), is_test=is_test)
+            participant.create_trials(kind=Trial.TRAINING, is_test=is_test)
+            participant.create_trials(kind=Trial.EXPERIMENT, is_test=is_test)
+
+            # For test participant the questionnaire fields will be prepopulated
+            if is_test:
+                participant.age = 18
+                participant.sex = cls.MALE
+                participant.gave_consent = True
+                participant.save()
+
         return participant
 
     def get_next_trial(self, about_to_be_sent=False):
@@ -128,8 +145,8 @@ class Participant(models.Model):
     def get_last_sent_trial(self):
         return self.trial_set.filter(sent=True).order_by('number').last()
 
-    def create_trials(self, kind, test=False):
-        trial_list = self.create_trial_list(kind=kind, test=test)
+    def create_trials(self, kind, is_test=False):
+        trial_list = self.create_trial_list(kind=kind, is_test=is_test)
 
         trials = list()
         for number, row in enumerate(trial_list.itertuples(), 1):
@@ -154,58 +171,46 @@ class Participant(models.Model):
         self.n_blocks = ceil(len(trial_list) / self.trials_per_block)
         self.save()
 
-    def create_trial_list(self, kind, test=False) -> pd.DataFrame:
-        if not test:
-            # I import here to allow myself to have circular imports. This is a big no-no but I can't figure out how
-            # to structure it better.
-            from .create_trial_list import make_stimulus_list, practice_sheet
+    def create_trial_list(self, kind, is_test=False) -> pd.DataFrame:
+        # I import here to allow myself to have circular imports. This is a big no-no but I can't figure out how
+        # to structure it better.
+        from .create_trial_list import make_stimulus_list, practice_sheet
 
-            if kind == Trial.EXPERIMENT:
-                trial_list = make_stimulus_list(random_seed=self.random_seed)
-            elif kind == Trial.TRAINING:
-                trial_list = practice_sheet
+        if kind == Trial.EXPERIMENT:
+            trial_list = make_stimulus_list(random_seed=self.random_seed)
+        elif kind == Trial.TRAINING:
+            trial_list = practice_sheet
 
-            # The data format has to be adapted a bit from the offline version.
-            # This is some awful code below and it might have been better to change the original code but that would
-            # make it less compatible with the offline version.
+        # Test participants have fewer trials and fewer blocks
+        if is_test:
+            n_trials = TRIALS_PER_BLOCK_TEST * (N_BLOCKS_TEST if kind == Trial.EXPERIMENT else 1)
+            trial_list = trial_list.iloc[:n_trials].copy()
 
-            def make_frame(configuration, objects):
-                frame = [[None, None], [None, None]]
-                for r, c, object_ in zip(*np.where(configuration), objects):
-                    frame[r][c] = object_
-                return frame
-            trial_list['frame'] = trial_list.apply(lambda row: make_frame(row.configuration, row.objects),
-                                                   axis='columns')
-            trial_list['frame_duration'] = trial_list.objects.apply(len) * 750  # 750 ms per object
+        # The data format has to be adapted a bit from the offline version.
+        # This is some awful code below and it might have been better to change the original code but that would
+        # make it less compatible with the offline version.
 
-            trial_list['target'] = trial_list.apply(lambda row: row.frame[row.target_cell[0]][row.target_cell[1]],
-                                                    axis='columns')
-            trial_list['lure'] = trial_list.apply(lambda row: row.frame[row.lure_cell[0]][row.lure_cell[1]],
-                                                  axis='columns')
-            trial_list['response_option_left'] = trial_list.target.where(trial_list.target_position == 'left',
-                                                                         trial_list.lure)
-            trial_list['response_option_right'] = trial_list.target.where(trial_list.target_position == 'right',
-                                                                          trial_list.lure)
+        def make_frame(configuration, objects):
+            frame = [[None, None], [None, None]]
+            for r, c, object_ in zip(*np.where(configuration), objects):
+                frame[r][c] = object_
+            return frame
+        trial_list['frame'] = trial_list.apply(lambda row: make_frame(row.configuration, row.objects),
+                                               axis='columns')
+        trial_list['frame_duration'] = trial_list.objects.apply(len) * 750  # 750 ms per object
 
-            trial_list.rename(columns={'onset': 'hold_duration'}, inplace=True)
+        trial_list['target'] = trial_list.apply(lambda row: row.frame[row.target_cell[0]][row.target_cell[1]],
+                                                axis='columns')
+        trial_list['lure'] = trial_list.apply(lambda row: row.frame[row.lure_cell[0]][row.lure_cell[1]],
+                                              axis='columns')
+        trial_list['response_option_left'] = trial_list.target.where(trial_list.target_position == 'left',
+                                                                     trial_list.lure)
+        trial_list['response_option_right'] = trial_list.target.where(trial_list.target_position == 'right',
+                                                                      trial_list.lure)
 
-            return trial_list
-        else:
-            return self.create_test_trial_list()
+        trial_list.rename(columns={'onset': 'hold_duration'}, inplace=True)
 
-    @staticmethod
-    def create_test_trial_list():
-        return pd.DataFrame(
-            columns='frame,frame_duration,response_option_left,response_option_right,audio_name,hold_duration'.split(
-                ','),
-            data=[
-                [[[None, 'acorn'], ['axe', None]], 1500, 'acorn', 'axe', 'in-this-picture_left_negative', 1714],
-                [[['acorn', None], [None, 'axe']], 1500, 'axe', 'acorn', 'this-time_negative_top', 1123],
-                [[['flask', 'acorn'], [None, 'axe']], 2250, 'acorn', 'axe', 'this-time_negative_top', 1123],
-                [[['medal', 'axe'], ['flask', 'acorn']], 3000, 'medal', 'acorn', 'this-time_top_negative', 1442],
-                [[['flask', 'medal'], ['axe', None]], 2250, 'axe', 'medal', 'this-time_negative_right', 1123],
-                [[[None, 'acorn'], ['flask', 'medal']], 2250, 'acorn', 'flask', 'this-time_positive_bottom', 1160],
-            ])
+        return trial_list
 
     def determine_stage(self, page_just_seen):
 

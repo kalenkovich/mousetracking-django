@@ -12,7 +12,7 @@ def router(request, is_test):
     """
     This view routes to all the other ones depending on the stage the participant is at
     """
-    participant = Participant.get_or_create_participant(request)
+    participant = Participant.get_or_create_participant(request, is_test=is_test)
     stage = participant.determine_stage(page_just_seen=request.POST.get('just_saw'))
 
     if stage == Stages.welcome:
