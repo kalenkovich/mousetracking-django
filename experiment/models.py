@@ -88,7 +88,10 @@ class Participant(models.Model):
             return None  # We don't give a next trial unless we are inside a block or in training
 
         next_trial = self.trial_set.filter(kind=trial_kind, sent=False).order_by('number').first()  # type: Trial
+        if not about_to_be_sent:
+            return next_trial
 
+        # No more trials of this kind
         if not next_trial:
             # If we are out of experiment trials, we are done
             if trial_kind == Trial.EXPERIMENT:
@@ -99,15 +102,18 @@ class Participant(models.Model):
             self.save()
             return None
 
-        if about_to_be_sent is True:
+        # An experiment block has just been finished
+        if next_trial.is_first_in_next_block() and trial_kind == Trial.EXPERIMENT:
+            self.stage = Stages.before_block
+            self.next_block_number = next_trial.block_number + 1
+            self.save()
+            return None
+
+        # A trial within a block
+        else:
             next_trial.sent = True
             next_trial.save()
-            if trial_kind == Trial.EXPERIMENT and next_trial.is_last_in_block():
-                self.stage = Stages.before_block
-                self.next_block_number = next_trial.block_number + 1
-                self.save()
-
-        return next_trial
+            return next_trial
 
     def get_last_sent_trial(self):
         return self.trial_set.filter(sent=True).order_by('number').last()
@@ -295,8 +301,8 @@ class Trial(models.Model):
         )
         trial_results.save()
 
-    def is_last_in_block(self):
-        return self.number % self.participant.trials_per_block == 0
+    def is_first_in_next_block(self):
+        return self.number > self.participant.trials_per_block * self.participant.current_block_number
 
     @property
     def block_number(self):
