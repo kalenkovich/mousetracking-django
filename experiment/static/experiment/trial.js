@@ -127,6 +127,7 @@ const trial = {
         audio.add();
         response_options.add();
         start_button.add();
+        feedback.add();
     },
 
     promise_to_load_all: function () {
@@ -142,6 +143,7 @@ const trial = {
         // audio.stop();
         response_options.hide();
         start_button.hide();
+        feedback.hide();
     },
 
     start: function () {
@@ -436,6 +438,56 @@ start_button = {
 
     hide: function () {
         $('#start-button').css('visibility', 'hidden');
+    },
+
+};
+
+const feedback = {
+    duration: 500,
+
+    id: 'feedback-msg',
+
+    add: function () {
+        if ($('#' + feedback.id).length) {
+            return
+        }
+
+        const div = document.createElement('div');
+        div.className = 'center-of-the-screen';
+        div.id = feedback.id;
+        div.style.height = "auto";
+        div.style.width = "20vw";
+        div.style.fontSize = "10vh";
+        // Center text horizontally and vertically
+        div.style.textAlign = "center";
+        div.style.verticalAlign = "middle";
+        div.style.lineHeight = div.style.height;
+
+        // Add a border
+        div.style.borderWidth = "5px";
+        div.style.borderStyle = 'solid';
+
+        // Add solid background
+        div.style.backgroundColor = 'white';
+        div.style.visibility = 'hidden';
+        document.body.appendChild(div);
+    },
+
+    show: function () {
+        const div = $('#' + feedback.id).get(0);
+        if (trial.results.selected_response == trial.correct_response){
+            div.innerHTML = 'Correct!';
+            div.style.borderColor = 'green';
+        } else {
+            div.innerHTML = 'That was incorrect, unfortunately';
+            div.style.borderColor = 'red';
+        }
+        div.style.visibility = 'visible';
+    },
+
+    hide: function () {
+        const div = $('#' + feedback.id).get(0);
+        div.style.visibility = 'hidden';
     },
 
 };
