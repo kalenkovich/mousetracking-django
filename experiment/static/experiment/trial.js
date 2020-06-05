@@ -52,8 +52,7 @@ const trial = {
     },
 
     get correct_response() {
-        return 'left';
-        // return JSON.parse(localStorage.getItem('correct_response'));
+        return JSON.parse(localStorage.getItem('correct_response'));
     },
 
     update_settings: function (data) {
