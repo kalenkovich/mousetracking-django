@@ -199,8 +199,8 @@ const trial = {
         mousetracking.stop_tracking();
         trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
         Promise.all([
-            trial.send_results().then(trial.promise_to_load_all),
-            feedback.show_and_hide_promise()]
+            feedback.show_and_hide_promise(trial.correct_response),
+            trial.send_results().then(trial.promise_to_load_all)]
         ).then(start_button.show);
     },
 
@@ -475,9 +475,9 @@ const feedback = {
         document.body.appendChild(div);
     },
 
-    show: function () {
+    show: function (correct_response) {
         const div = $('#' + feedback.id).get(0);
-        if (trial.results.selected_response == trial.correct_response){
+        if (trial.results.selected_response == correct_response){
             div.innerHTML = 'Correct!';
             div.style.borderColor = 'green';
         } else {
@@ -492,12 +492,11 @@ const feedback = {
         div.style.visibility = 'hidden';
     },
 
-    show_and_hide_promise: function() {
+    show_and_hide_promise: function(correct_response) {
         return new Promise((resolve) => {
             window.setTimeout(
             function () {
-                // hide frame, start playing audio
-                feedback.show();
+                feedback.show(correct_response);
                 window.setTimeout(
                     function () {
                         // show options and release the cursor
