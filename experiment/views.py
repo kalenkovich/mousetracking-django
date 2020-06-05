@@ -8,7 +8,7 @@ from .forms import ParticipantForm
 from .models import Participant, Trial, Stages
 
 
-def router(request):
+def router(request, is_test):
     """
     This view routes to all the other ones depending on the stage the participant is at
     """
