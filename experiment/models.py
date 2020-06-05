@@ -290,6 +290,14 @@ class Trial(models.Model):
     # Time before the options are presented and the cursor is released
     hold_duration = models.IntegerField()
 
+    LEFT = 'L'
+    RIGHT = 'R'
+    CORRECT_RESPONSE_CHOICES = [
+        (LEFT, 'left'),
+        (RIGHT, 'right')
+    ]
+    correct_response = models.CharField(max_length=1, choices=CORRECT_RESPONSE_CHOICES)
+
     def get_settings(self):
         frame_images_uris = [
             static(self.frame_top_left.uri) if self.frame_top_left else None,
