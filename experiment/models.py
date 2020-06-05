@@ -28,6 +28,7 @@ class Stages(object):
     in_training = 'in_training'
     before_block = 'before_block'
     in_block = 'in_block'
+    done_with_trials = 'done_with_trials'
     goodbye = 'goodbye'
 
 
@@ -54,9 +55,9 @@ class Participant(models.Model):
     gave_consent = models.BooleanField(default=False)
 
     stage = models.CharField(max_length=80)
-    # The number of the block that the next trail belongs too. Updated when we get to the last trial in block in
+    # The number of the block that the next trial belongs too. Updated when we get to the first trial in a new block in
     # `get_next_trial`
-    next_block_number = models.IntegerField(default=1)
+    current_block_number = models.IntegerField(default=1)
     # Total number of blocks. Populated once in `create_trials`
     n_blocks = models.IntegerField(null=True)
 
@@ -87,25 +88,32 @@ class Participant(models.Model):
             return None  # We don't give a next trial unless we are inside a block or in training
 
         next_trial = self.trial_set.filter(kind=trial_kind, sent=False).order_by('number').first()  # type: Trial
+        if not about_to_be_sent:
+            return next_trial
 
+        # No more trials of this kind
         if not next_trial:
             # If we are out of experiment trials, we are done
             if trial_kind == Trial.EXPERIMENT:
                 self.is_done = True
+                self.stage = Stages.done_with_trials
             elif trial_kind == Trial.TRAINING:
                 self.stage = Stages.before_block
             self.save()
             return None
 
-        if about_to_be_sent is True:
+        # An experiment block has just been finished
+        if next_trial.is_first_in_next_block() and trial_kind == Trial.EXPERIMENT:
+            self.stage = Stages.before_block
+            self.next_block_number = next_trial.block_number + 1
+            self.save()
+            return None
+
+        # A trial within a block
+        else:
             next_trial.sent = True
             next_trial.save()
-            if trial_kind == Trial.EXPERIMENT and next_trial.is_last_in_block():
-                self.stage = Stages.before_block
-                self.next_block_number = next_trial.block_number + 1
-                self.save()
-
-        return next_trial
+            return next_trial
 
     def get_last_sent_trial(self):
         return self.trial_set.filter(sent=True).order_by('number').last()
@@ -203,9 +211,10 @@ class Participant(models.Model):
             self.stage = Stages.in_training
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
-
+        elif self.stage == Stages.done_with_trials:
+            self.stage = Stages.goodbye
         else:
-            # Setting "before_block" and "goodbye" stages is handled by the `get_next_trial` method
+            # Setting "before_block" and "done_with_trials" stages is handled by the `get_next_trial` method
             pass
 
         self.save()
@@ -292,8 +301,8 @@ class Trial(models.Model):
         )
         trial_results.save()
 
-    def is_last_in_block(self):
-        return self.number % self.participant.trials_per_block == 0
+    def is_first_in_next_block(self):
+        return self.number > self.participant.trials_per_block * self.participant.current_block_number
 
     @property
     def block_number(self):

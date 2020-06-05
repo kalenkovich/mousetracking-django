@@ -182,3 +182,17 @@ python manage.py migrate experiment
 # Add "other" as sex
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+## Fix having an extra empty block at the end
+# Because we go to next block when we get to the last trial in a block and we understand that we should finish when
+# there are no more trials, there is a problem when we get to the last trial of the last block. In that case, we have
+# not yet tried and failed to get a new trial, so we preparte for the next extra block, show "block n+1/n is about to
+# begin", go to the trial page which then requests a new trial which we don't have so we finish.
+# To avoid this, we will be figuring out that the block is finished when the next trial belongs to a new block. In this
+# case, we will not return that trial and increment the block counter in the `Participant` model. With this new role,
+# it makes no sense to call the counter `next_block_number` so, first, we will rename it to `current_block_number`.
+python manage.py makemigrations experiment
+# Confirm that a field has been renamed
+y
+# migrate
+python manage.py migrate experiment
