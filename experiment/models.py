@@ -28,6 +28,7 @@ class Stages(object):
     in_training = 'in_training'
     before_block = 'before_block'
     in_block = 'in_block'
+    done_with_trials = 'done_with_trials'
     goodbye = 'goodbye'
 
 
@@ -92,6 +93,7 @@ class Participant(models.Model):
             # If we are out of experiment trials, we are done
             if trial_kind == Trial.EXPERIMENT:
                 self.is_done = True
+                self.stage = Stages.done_with_trials
             elif trial_kind == Trial.TRAINING:
                 self.stage = Stages.before_block
             self.save()
@@ -203,9 +205,10 @@ class Participant(models.Model):
             self.stage = Stages.in_training
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
-
+        elif self.stage == Stages.done_with_trials:
+            self.stage = Stages.goodbye
         else:
-            # Setting "before_block" and "goodbye" stages is handled by the `get_next_trial` method
+            # Setting "before_block" and "done_with_trials" stages is handled by the `get_next_trial` method
             pass
 
         self.save()
