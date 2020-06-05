@@ -28,7 +28,7 @@ def router(request, is_test):
         return mousetracking(request)
 
     if stage == Stages.before_block:
-        return before_block(request, block_number=participant.next_block_number, n_blocks=participant.n_blocks)
+        return before_block(request, block_number=participant.current_block_number, n_blocks=participant.n_blocks)
 
     if stage == Stages.in_block:
         return mousetracking(request)

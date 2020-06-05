@@ -132,7 +132,7 @@ class Participant(models.Model):
         # An experiment block has just been finished
         if next_trial.is_first_in_next_block() and trial_kind == Trial.EXPERIMENT:
             self.stage = Stages.before_block
-            self.next_block_number = next_trial.block_number + 1
+            self.current_block_number = next_trial.block_number
             self.save()
             return None
 
