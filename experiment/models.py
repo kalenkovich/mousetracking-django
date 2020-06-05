@@ -55,9 +55,9 @@ class Participant(models.Model):
     gave_consent = models.BooleanField(default=False)
 
     stage = models.CharField(max_length=80)
-    # The number of the block that the next trail belongs too. Updated when we get to the last trial in block in
+    # The number of the block that the next trial belongs too. Updated when we get to the first trial in a new block in
     # `get_next_trial`
-    next_block_number = models.IntegerField(default=1)
+    current_block_number = models.IntegerField(default=1)
     # Total number of blocks. Populated once in `create_trials`
     n_blocks = models.IntegerField(null=True)
 
