@@ -206,3 +206,8 @@ python manage.py makemigrations experiment
 'R'
 # migrate
 python manage.py migrate experiment
+
+# # Use bootstrap to style non-experiment pages
+# Add __base.html and __layout_single_column_with_continue.html
+# Change all pages to extend __layout_single_column_with_continue.html
+# The form page is different because it has its own button
