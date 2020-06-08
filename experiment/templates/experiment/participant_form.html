@@ -1,12 +1,6 @@
-{% load static from staticfiles %}
+{% extends 'experiment/__layout_single_column_with_continue.html' %}
 
-<head>
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/base.css" %}">
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive.css" %}">
-</head>
-
-<body style="margin-left:5%; margin-top:2%;">
+{% block single_column %}
 
 Please fill the form below.
 
@@ -46,4 +40,9 @@ Please fill the form below.
         {{ form.form_name }}
     </form>
 </div>
-</body>
+
+{% endblock single_column %}
+
+{% block continue_button %}
+    <!-- Filling this block with nothing removes the continue button -->
+{% endblock %}
