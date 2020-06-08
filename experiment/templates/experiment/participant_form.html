@@ -1,47 +1,45 @@
 {% extends 'experiment/__layout_single_column_with_continue.html' %}
+{% load widget_tweaks %}
 
 {% block single_column %}
 
 Please fill the form below.
 
-<div style="display:flex">
-    <form action="" method="post">
-        {% csrf_token %}
+<form action="" method="post">
+    {% csrf_token %}
 
-        <fieldset class="module aligned ">
-            <div class="form-row">
-                <label class="required" for="{{ form.age.id_for_label }}">Age:</label>
-                {{ form.age }}
-            </div>
+    <div class="form-group row">
+        <label class="col-form-label col-sm-1" for="{{ form.age.id_for_label }}">Age:</label>
+        {% render_field form.age class="form-control col-sm-3" %}
+    </div>
 
-            <div class="form-row">
-                <label class="required" for="{{ form.sex.id_for_label }}">Sex:</label>
-                {{ form.sex }}
-            </div>
-        </fieldset>
+    <div class="form-group row">
+        <label class="col-form-label col-sm-1" for="{{ form.sex.id_for_label }}">Sex:</label>
+        {% render_field form.sex class="form-control col-sm-3" %}
+    </div>
 
-            <div class="text">
-                <h2>Informed consent</h2>
-                Informed consent content
-            </div>
+    <div class="text">
+        <h2>Informed consent</h2>
+        Informed consent content
+    </div>
 
-        <div class="checkbox-row">
-            <br>
-            By checking the box below, I confirm that I consent to participating in the experiment.
-            <br>
-            {{ form.gave_consent }}
-            <label class="required vCheckboxLabel" for="{{ form.gave_consent.id_for_label }}">I confirm</label>
+    <div>
+        <br>
+        By checking the box below, I confirm that I consent to participating in the experiment.
+        <br>
+        <div class="form-check">
+
+            {% render_field form.gave_consent class="form-check-input" %}
+            <label class="form-check-label" for="{{ form.gave_consent.id_for_label }}">I confirm</label>
         </div>
+    </div>
 
-        <div class="submit-row">
-            <input type="submit" value="Continue">
-        </div>
+    <button type="submit" class="btn btn-primary">Continue</button>
 
-        {{ form.form_name }}
-    </form>
-</div>
+    {{ form.form_name }}
+</form>
 
-{% endblock single_column %}
+{%  endblock %}
 
 {% block continue_button %}
     <!-- Filling this block with nothing removes the continue button -->
