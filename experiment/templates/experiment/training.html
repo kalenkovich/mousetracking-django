@@ -1,8 +1,6 @@
-Training is about to begin.
-<div>
-    <form method="post">
-      {% csrf_token %}
-      <input type="hidden" name="just_saw" value="{{ stage }}">
-      <input type="submit" value="Continue">
-    </form>
-</div>
+{% extends 'experiment/__layout_single_column_with_continue.html' %}
+
+{% block single_column %}
+    <h1> Training </h1>
+    Training is about to begin.
+{% endblock %}

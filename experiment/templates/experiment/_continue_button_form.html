@@ -1,0 +1,7 @@
+<div>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="just_saw" value="{{ stage }}">
+        {% include 'experiment/_continue_button.html' %}
+    </form>
+</div>
