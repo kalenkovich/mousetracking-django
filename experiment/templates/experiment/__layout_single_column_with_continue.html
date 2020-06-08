@@ -1,0 +1,17 @@
+{% extends '__base.html' %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row justify-content-sm-center">
+            <div class="col-lg-5 col-md-8 col-sm-10 col-12">
+
+                {% block single_column %}{% endblock %}
+
+                {% include "experiment/_continue_button.html" %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
