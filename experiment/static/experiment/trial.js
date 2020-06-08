@@ -410,7 +410,7 @@ start_button = {
         div.style.height = "10vh";
         div.style.width = "20vw";
         div.innerHTML = "Start";
-        div.style.fontSize = "5vh";
+        div.style.fontSize = "3vw";
         // Center text horizontally and vertically
         div.style.textAlign = "center";
         div.style.verticalAlign = "middle";
