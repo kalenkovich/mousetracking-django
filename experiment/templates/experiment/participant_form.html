@@ -3,41 +3,43 @@
 
 {% block single_column %}
 
-Please fill the form below.
+    <h1>Personal information</h1>
 
-<form action="" method="post">
-    {% csrf_token %}
+    Please fill the form below.
 
-    <div class="form-group row">
-        <label class="col-form-label col-sm-1" for="{{ form.age.id_for_label }}">Age:</label>
-        {% render_field form.age class="form-control col-sm-3" %}
-    </div>
+    <form action="" method="post">
+        {% csrf_token %}
 
-    <div class="form-group row">
-        <label class="col-form-label col-sm-1" for="{{ form.sex.id_for_label }}">Sex:</label>
-        {% render_field form.sex class="form-control col-sm-3" %}
-    </div>
-
-    <div class="text">
-        <h2>Informed consent</h2>
-        Informed consent content
-    </div>
-
-    <div>
-        <br>
-        By checking the box below, I confirm that I consent to participating in the experiment.
-        <br>
-        <div class="form-check">
-
-            {% render_field form.gave_consent class="form-check-input" %}
-            <label class="form-check-label" for="{{ form.gave_consent.id_for_label }}">I confirm</label>
+        <div class="form-group row">
+            <label class="col-form-label col-sm-1" for="{{ form.age.id_for_label }}">Age:</label>
+            {% render_field form.age class="form-control col-sm-3" %}
         </div>
-    </div>
 
-    {% include 'experiment/_continue_button.html' %}
+        <div class="form-group row">
+            <label class="col-form-label col-sm-1" for="{{ form.sex.id_for_label }}">Sex:</label>
+            {% render_field form.sex class="form-control col-sm-3" %}
+        </div>
 
-    {{ form.form_name }}
-</form>
+        <div class="text">
+            <h1>Informed consent</h1>
+            Informed consent content
+        </div>
+
+        <div>
+            <br>
+            By checking the box below, I confirm that I consent to participating in the experiment.
+            <br>
+            <div class="form-check">
+
+                {% render_field form.gave_consent class="form-check-input" %}
+                <label class="form-check-label" for="{{ form.gave_consent.id_for_label }}">I confirm</label>
+            </div>
+        </div>
+
+        {% include 'experiment/_continue_button.html' %}
+
+        {{ form.form_name }}
+    </form>
 
 {%  endblock %}
 
