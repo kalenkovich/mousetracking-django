@@ -8,7 +8,9 @@
 
                 {% block single_column %}{% endblock %}
 
-                {% include "experiment/_continue_button.html" %}
+                {% block continue_button %}
+                    {% include "experiment/_continue_button.html" %}
+                {%  endblock %}
 
             </div>
         </div>
