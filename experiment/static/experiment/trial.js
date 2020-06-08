@@ -405,7 +405,7 @@ start_button = {
         }
 
         const div = document.createElement('div');
-        div.className = 'bottom-center-of-the-screen';
+        div.className = 'bottom-center-of-the-screen unselectable';
         div.id = id;
         div.style.height = "10vh";
         div.style.width = "20vw";
@@ -455,7 +455,7 @@ const feedback = {
         }
 
         const div = document.createElement('div');
-        div.className = 'center-of-the-screen';
+        div.className = 'center-of-the-screen unselectable';
         div.id = feedback.id;
         div.style.height = "auto";
         div.style.width = "20vw";
