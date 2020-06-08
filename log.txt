@@ -211,3 +211,5 @@ python manage.py migrate experiment
 # Add __base.html and __layout_single_column_with_continue.html
 # Change all pages to extend __layout_single_column_with_continue.html
 # The form page is different because it has its own button
+# Installed django-widget-tweaks to allow us to change form filed classes on the template side
+pip install -r requirements.txt
