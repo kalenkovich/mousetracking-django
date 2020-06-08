@@ -459,7 +459,7 @@ const feedback = {
         div.id = feedback.id;
         div.style.height = "auto";
         div.style.width = "20vw";
-        div.style.fontSize = "10vh";
+        div.style.fontSize = "3vw";
         // Center text horizontally and vertically
         div.style.textAlign = "center";
         div.style.verticalAlign = "middle";
