@@ -1,4 +1,5 @@
 {% extends 'experiment/__layout_single_column_with_continue.html' %}
+{% load static %}
 
 {% block single_column %}
 
@@ -11,6 +12,16 @@
         After you do, we will show you a frame with 2-4 images like the one below.
     </p>
 
+    <div class="row justify-content-sm-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <img src="{% static "experiment/sample_frame_empty-cheese-globe-muffin.jpg" %}"
+                 alt="Не получилось загрузить картинку. Свяжитесь, пожалуйста, с экспериментатором."
+                 width="100%"
+                 style="margin-bottom:2vh;"
+            />
+        </div>
+    </div>
+
     <p>
         You will need to memorize the objects in it.
         A question will then start playing in your headphones (please use headphones during the experiment).
@@ -18,12 +29,55 @@
         This is also a good time to adjust the volume to a comfortable level.
     </p>
 
+    <audio id = "sample-audio" src="{% static "experiment/audio/ogg/in-this-picture_right_negative.ogg" %}"></audio>
+    <div class="row justify-content-center">
+        <div class="col-2">
+            <img class="img-thumbnail" id="sample-audio-controls" src="{% static "experiment/play_icon.png" %}"
+                 height="5vh";
+                 style="margin-bottom:2vh;height:10vh;"/>
+        </div>
+    </div>
+
+
+    <script>
+        const sampleAudio=document.getElementById("sample-audio");
+        const sampleAudioControls = document.getElementById("sample-audio-controls");
+
+        function play() {
+            sampleAudio.play();
+            sampleAudioControls.src = "{% static "experiment/pause_icon.png" %}"
+        }
+
+        function pause() {
+            sampleAudio.pause();
+            sampleAudioControls.src = "{% static "experiment/play_icon.png" %}";
+        }
+
+        function togglePlayPause() {
+            sampleAudio.paused ? play() : pause()
+        }
+
+        sampleAudioControls.addEventListener('click', togglePlayPause);
+        sampleAudio.addEventListener('ended', pause);
+    </script>
+
     <p>
         While the question is playing, two images from the frame will appear in the top corners of the screen.
         Only one of the images constitutes a correct answer to the question you just heard.
         Click the correct one using your mouse (no touchpad!).
         Below is an example of two such images.
     </p>
+
+    <div class="row justify-content-between align-items-center">
+        <div class="col-lg-3 col-md-4 col-5">
+            <img src="{% static "experiment/objects/globe.png" %}"
+                  height="20vh;" style="margin-bottom:2vh;height:24vh;"/>
+        </div>
+        <div class="col-lg-3 col-md-4 col-5">
+            <img src="{% static "experiment/objects/cheese.png" %}"
+                 height="20vh;" style="margin-bottom:2vh;height:20vh;"/>
+        </div>
+    </div>
 
     <p>
         The question audio also contains a series of beeps (play the sample question again to hear them).
