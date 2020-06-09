@@ -1,4 +1,5 @@
 {% extends 'experiment/__layout_single_column_with_continue.html' %}
+{% load static %}
 
 {% block single_column %}
 
@@ -10,6 +11,16 @@
         The task will always start when you press the "Start" button in the bottom of the screen.
         After you do, we will show you a frame with 2-4 images like the one below.
     </p>
+
+    <div class="row justify-content-sm-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <img src="{% static "experiment/sample_frame_empty-cheese-globe-muffin.jpg" %}"
+                 alt="Не получилось загрузить картинку. Свяжитесь, пожалуйста, с экспериментатором."
+                 width="100%"
+                 style="margin-bottom:2vh;"
+            />
+        </div>
+    </div>
 
     <p>
         You will need to memorize the objects in it.
