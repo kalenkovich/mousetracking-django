@@ -29,6 +29,38 @@
         This is also a good time to adjust the volume to a comfortable level.
     </p>
 
+    <audio id = "sample-audio" src="{% static "experiment/audio/ogg/in-this-picture_right_negative.ogg" %}"></audio>
+    <div class="row justify-content-center">
+        <div class="col-2">
+            <img class="img-thumbnail" id="sample-audio-controls" src="{% static "experiment/play_icon.png" %}"
+                 height="5vh";
+                 style="margin-bottom:2vh;height:10vh;"/>
+        </div>
+    </div>
+
+
+    <script>
+        const sampleAudio=document.getElementById("sample-audio");
+        const sampleAudioControls = document.getElementById("sample-audio-controls");
+
+        function play() {
+            sampleAudio.play();
+            sampleAudioControls.src = "{% static "experiment/pause_icon.png" %}"
+        }
+
+        function pause() {
+            sampleAudio.pause();
+            sampleAudioControls.src = "{% static "experiment/play_icon.png" %}";
+        }
+
+        function togglePlayPause() {
+            sampleAudio.paused ? play() : pause()
+        }
+
+        sampleAudioControls.addEventListener('click', togglePlayPause);
+        sampleAudio.addEventListener('ended', pause);
+    </script>
+
     <p>
         While the question is playing, two images from the frame will appear in the top corners of the screen.
         Only one of the images constitutes a correct answer to the question you just heard.
