@@ -113,6 +113,7 @@ class Participant(models.Model):
             if is_test:
                 participant.age = 18
                 participant.sex = cls.MALE
+                participant.native_language = cls.RUSSIAN
                 participant.gave_consent = True
                 participant.save()
 
