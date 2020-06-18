@@ -11,13 +11,19 @@
         {% csrf_token %}
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-1" for="{{ form.age.id_for_label }}">Age:</label>
+            <label class="col-form-label col-sm-3" for="{{ form.age.id_for_label }}">Age:</label>
             {% render_field form.age class="form-control col-sm-3" %}
         </div>
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-1" for="{{ form.sex.id_for_label }}">Sex:</label>
+            <label class="col-form-label col-sm-3" for="{{ form.sex.id_for_label }}">Sex:</label>
             {% render_field form.sex class="form-control col-sm-3" %}
+        </div>
+
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3" for="{{ form.native_language.id_for_label }}">Native language:</label>
+            {% render_field form.native_language class="form-control col-sm-3" %}
+            <small class="col text-muted">{{ form.native_language.help_text }}</small>
         </div>
 
         <div class="text">
