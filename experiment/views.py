@@ -8,10 +8,17 @@ from .forms import ParticipantForm
 from .models import Participant, Trial, Stages
 
 
+def pc_only(request):
+    return render(request, 'experiment/pc_only.html')
+
+
 def router(request, is_test):
     """
     This view routes to all the other ones depending on the stage the participant is at
     """
+    if not request.user_agent.is_pc:
+        return pc_only(request)
+
     participant = Participant.get_or_create_participant(request, is_test=is_test)
     stage = participant.determine_stage(page_just_seen=request.POST.get('just_saw'))
 
