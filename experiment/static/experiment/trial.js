@@ -238,7 +238,8 @@ frame = {
         const percent_per_pixel = 100 / 1920;
         const border = 17 * percent_per_pixel;
         const cell_side = 210 * percent_per_pixel;
-        return [cell_side, border];
+        const image_side = 120 * percent_per_pixel;
+        return [cell_side, border, image_side];
     },
 
     add: function () {
@@ -254,18 +255,26 @@ frame = {
 			<table class="frame">
 				<tr>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-0">
+    					<div class="frame-image-container">
+	    					<img class = "as-large-as-fits" id="image-0">
+	    				</div>
 					</td>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-1">
+						<div class="frame-image-container">
+						    <img class = "as-large-as-fits" id="image-1">
+						</div>
 					</td>
 				</tr>
 				<tr>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-2">
+					    <div class="frame-image-container">
+						    <img class = "as-large-as-fits" id="image-2">
+                        </div>
 					</td>
 					<td class="frame">
-						<img class = "as-large-as-fits" id="image-3">
+					    <div class="frame-image-container">
+						    <img class = "as-large-as-fits" id="image-3">
+						</div>
 					</td>
 				</tr>
 			</table>
@@ -273,13 +282,21 @@ frame = {
         document.body.appendChild(div);
 
 
-        [cell_side, border] = frame.calculate_sizes();
+        [cell_side, border, image_side] = frame.calculate_sizes();
+
         $('td.frame').css({
             'height': cell_side + 'vw',
             'width': cell_side + 'vw',
             'border-width': border + 'vw',
             'border-style': 'solid',
-            'border-color': 'brown'
+            'border-color': 'brown',
+            'text-align': 'center'
+        });
+
+        $('.frame-image-container').css({
+            'height': image_side + 'vw',
+            'width': image_side + 'vw',
+            'display': 'inline-block'
         });
     },
 
