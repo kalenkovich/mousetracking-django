@@ -213,3 +213,13 @@ python manage.py migrate experiment
 # The form page is different because it has its own button
 # Installed django-widget-tweaks to allow us to change form filed classes on the template side
 pip install -r requirements.txt
+
+# # Add native language information
+# Added `native_language` field to the Participant model
+# When making a migration, set 'RU' as default
+python manage.py makemigrations experiment
+# default for `native_language`
+1
+'RU'
+# migrate
+python manage.py migrate experiment

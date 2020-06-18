@@ -52,6 +52,17 @@ class Participant(models.Model):
         choices=SEX_CHOICES,
     )
 
+    RUSSIAN = 'RU'
+    OTHER_LANGUAGE = 'OTHER'
+    LANGUAGE_CHOICES = [
+        (RUSSIAN, 'русский'),
+        (OTHER_LANGUAGE, 'другой язык')
+    ]
+    native_language = models.CharField(
+        max_length=5,
+        choices=LANGUAGE_CHOICES,
+    )
+
     age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
 
     gave_consent = models.BooleanField(default=False)
@@ -102,6 +113,7 @@ class Participant(models.Model):
             if is_test:
                 participant.age = 18
                 participant.sex = cls.MALE
+                participant.native_language = cls.RUSSIAN
                 participant.gave_consent = True
                 participant.save()
 
