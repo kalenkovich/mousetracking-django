@@ -63,6 +63,27 @@ class Participant(models.Model):
         choices=LANGUAGE_CHOICES,
     )
 
+    MOUSE = 'MOUSE'
+    TOUCHPAD = 'TOUCH'
+    POINTING_DEVICE_CHOICES = [
+        (MOUSE, 'мышка'),
+        (TOUCHPAD, 'тачпад/трекпад')
+    ]
+    pointing_device = models.CharField(
+        max_length=5,
+        choices=POINTING_DEVICE_CHOICES,
+        null=True,
+        blank=False
+    )
+
+    HEADPHONES_ON_YES = 'yes'
+    HEADPHONES_ON_NO = 'no'
+    HEADPHONES_ON_CHOICES = (
+        (HEADPHONES_ON_YES, 'проходил(а) в наушниках'),
+        (HEADPHONES_ON_NO, 'не вышло проходить в наушниках'),
+    )
+    headphones_on = models.CharField(max_length=3, choices=HEADPHONES_ON_CHOICES, null=True, blank=False)
+
     age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
 
     gave_consent = models.BooleanField(default=False)
