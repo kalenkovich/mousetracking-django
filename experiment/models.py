@@ -290,9 +290,18 @@ class Participant(models.Model):
     FORM_NAMES = (PARTICIPANT_FORM_NAME, DEVICES_QUESTIONNAIRE_FORM_NAME)
 
     def save_data_from_form(self, form):
-        form.save()
-        self.stage = Stages.form_filled
-        self.save()
+        form_name = form.data.get('form_name')
+        if form_name in self.FORM_NAMES:
+            form.save()
+
+            if form_name == self.PARTICIPANT_FORM_NAME:
+                self.stage = Stages.form_filled
+            elif form_name == self.DEVICES_QUESTIONNAIRE_FORM_NAME:
+                self.stage = Stages.devices_questionnaire_filled
+            self.save()
+
+        else:
+            raise ValueError(f'Form name {form_name} is not recognized by {type(self)}')
 
 
 class Trial(models.Model):
