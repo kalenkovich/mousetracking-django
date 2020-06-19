@@ -1,0 +1,42 @@
+{% extends 'experiment/__layout_single_column_with_continue.html' %}
+{% load widget_tweaks %}
+
+{% block single_column %}
+
+
+
+    <div class = "row mb-2">
+    <h1>Технические вопросы</h1>
+
+    Пожалуйста, ответьте на вопросы ниже максимально честно. Ваши ответы не повлияют никаким образом на успешность
+    прохождения вами данного эксперимента. Мы не будем ни в какой момент смотреть, кто именно дал те или иные ответы.
+    Одновременно нам очень важно знать эти ответы в анонимизированном виде для правильного анализа данных.
+    </div>
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.pointing_device.id_for_label }}">
+                Какое устройтсво вы использовали для управления курсором?
+            </label>
+            {% render_field form.pointing_device class="form-control" %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.headphones_on.id_for_label }}">
+                Получилось ли у вас проходить эксперимент в наушниках?
+            </label>
+            {% render_field form.headphones_on class="form-control" %}
+        </div>
+
+        {% include 'experiment/_continue_button.html' %}
+
+        {{ form.form_name }}
+    </form>
+
+{%  endblock %}
+
+{% block continue_button %}
+    <!-- Filling this block with nothing removes the continue button -->
+{% endblock %}

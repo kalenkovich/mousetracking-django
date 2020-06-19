@@ -279,6 +279,10 @@ class Participant(models.Model):
         else:
             return TRIALS_PER_BLOCK_TEST
 
+    PARTICIPANT_FORM_NAME = 'ParticipantForm'
+    DEVICES_QUESTIONNAIRE_FORM_NAME = 'DeviceQuestionnaireForm'
+    FORM_NAMES = (PARTICIPANT_FORM_NAME, DEVICES_QUESTIONNAIRE_FORM_NAME)
+
     def save_data_from_form(self, form):
         form.save()
         self.stage = Stages.form_filled
