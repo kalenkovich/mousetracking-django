@@ -12,6 +12,10 @@ def pc_only(request):
     return render(request, 'experiment/pc_only.html')
 
 
+def devices_check(request):
+    return render(request, 'experiment/devices_check.html')
+
+
 def router(request, is_test):
     """
     This view routes to all the other ones depending on the stage the participant is at
@@ -24,6 +28,9 @@ def router(request, is_test):
 
     if stage == Stages.welcome:
         return welcome(request)
+
+    if stage == Stages.devices_check:
+        return devices_check(request)
 
     if stage == Stages.participant_form:
         return participant_form(request, participant=participant)

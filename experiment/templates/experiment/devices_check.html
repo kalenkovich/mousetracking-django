@@ -1,0 +1,42 @@
+{% extends 'experiment/__layout_single_column_with_continue.html' %}
+{% load static %}
+
+{% block head-css %}
+    <link rel="stylesheet" type="text/css"
+          href="{%  static "experiment/headphone_check/HeadphoneCheckStyle.css" %}">
+{% endblock %}
+
+{% block head-js %}
+    <script type="text/javascript"
+            src="{%  static "experiment/headphone_check/HeadphoneCheck.js" %}"></script>
+    <script>
+        $(document).ready(function () {
+            $(document).on('hcHeadphoneCheckEnd', function (event, data) {
+                var headphoneCheckDidPass = data.didPass;
+                var headphoneCheckData = data.data;
+                var didPassMessage = headphoneCheckDidPass ? 'passed' : 'failed';
+                alert('Screening task ' + '.');
+            });
+
+            var headphoneCheckConfig = {};
+            /* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
+            HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+        });
+    </script>
+{% endblock %}
+
+{% block single_column %}
+
+    <div class="row">
+        <h1>Проверка работы наушников</h1>
+        Начнем мы с того, что проверим работу ваших наушников. Напоминаем, что эксперимент необходимо проходить именно в
+        наушниках: использовать звук из динамиков не получится.
+    </div>
+
+    <div id="hc-container"></div>
+
+{% endblock %}
+
+{% block continue_button %}
+    <!-- Filling this block with nothing removes the continue button -->
+{% endblock %}
