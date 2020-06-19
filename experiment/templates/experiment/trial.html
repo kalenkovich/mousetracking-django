@@ -1,7 +1,7 @@
 {% load static from staticfiles %}
 
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    {% include 'experiment/_load_jquery.html' %}
     <script src="{% static "experiment/mousetracking.js" %}"></script>
     <script src="{% static "experiment/fullscreen.js" %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static "experiment/fullscreen.css" %}">
