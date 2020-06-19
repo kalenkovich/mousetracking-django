@@ -86,6 +86,8 @@ class Participant(models.Model):
     )
     headphones_on = models.CharField(max_length=3, choices=HEADPHONES_ON_CHOICES, null=True, blank=False)
 
+    passed_headphones_check = models.BooleanField(default=None, null=True)
+
     age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
 
     gave_consent = models.BooleanField(default=False)
