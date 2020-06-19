@@ -4,7 +4,7 @@ from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .forms import ParticipantForm
+from .forms import ParticipantForm, DevicesQuestionnaireForm
 from .models import Participant, Trial, Stages
 
 
@@ -42,6 +42,9 @@ def router(request, is_test):
 
     if stage == Stages.in_block:
         return mousetracking(request)
+
+    if stage == Stages.devices_questionnaire:
+        return devices_questionnaire_form(request, participant=participant)
 
     if stage == Stages.goodbye:
         return goodbye(request)
@@ -118,11 +121,11 @@ def save_trial_results(request):
     return get_new_trial_settings(request, participant=participant)
 
 
-def participant_form(request, participant=None):
+def abstract_form(request, participant, form_class, form_template):
     participant = participant or Participant.get_participant(request)
 
-    if request.method == 'POST' and request.POST.get('form_name') == 'ParticipantForm':
-        form = ParticipantForm(request.POST, instance=participant)
+    if request.method == 'POST' and request.POST.get('form_name') in Participant.FORM_NAMES:
+        form = form_class(request.POST, instance=participant)
 
         if form.is_valid():
             participant.save_data_from_form(form)
@@ -132,11 +135,19 @@ def participant_form(request, participant=None):
                 return HttpResponseRedirect(reverse('router_test'))
 
     else:
-        form = ParticipantForm(instance=participant)
+        form = form_class(instance=participant)
 
     context = {
         'form': form,
         'participant': participant,
     }
 
-    return render(request, 'experiment/participant_form.html', context)
+    return render(request, form_template, context)
+
+
+def participant_form(request, participant=None):
+    return abstract_form(request, participant, ParticipantForm, 'experiment/participant_form.html')
+
+
+def devices_questionnaire_form(request, participant=None):
+    return abstract_form(request, participant, DevicesQuestionnaireForm, 'experiment/devices_questionnaire_form.html')

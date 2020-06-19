@@ -223,3 +223,9 @@ python manage.py makemigrations experiment
 'RU'
 # migrate
 python manage.py migrate experiment
+
+
+# # Ask whether they wore headphones and used mouse
+# Added 'headphones_on' and 'pointing_device' fields to Participant
+python manage.py makemigrations experiment
+python manage.py migrate experiment

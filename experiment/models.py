@@ -31,6 +31,8 @@ class Stages(object):
     before_block = 'before_block'
     in_block = 'in_block'
     done_with_trials = 'done_with_trials'
+    devices_questionnaire = 'devices_questionnaire'
+    devices_questionnaire_filled = 'devices_questionnaire_filled'
     goodbye = 'goodbye'
 
 
@@ -62,6 +64,27 @@ class Participant(models.Model):
         max_length=5,
         choices=LANGUAGE_CHOICES,
     )
+
+    MOUSE = 'MOUSE'
+    TOUCHPAD = 'TOUCH'
+    POINTING_DEVICE_CHOICES = [
+        (MOUSE, 'мышка'),
+        (TOUCHPAD, 'тачпад/трекпад')
+    ]
+    pointing_device = models.CharField(
+        max_length=5,
+        choices=POINTING_DEVICE_CHOICES,
+        null=True,
+        blank=False
+    )
+
+    HEADPHONES_ON_YES = 'yes'
+    HEADPHONES_ON_NO = 'no'
+    HEADPHONES_ON_CHOICES = (
+        (HEADPHONES_ON_YES, 'проходил(а) в наушниках'),
+        (HEADPHONES_ON_NO, 'не вышло проходить в наушниках'),
+    )
+    headphones_on = models.CharField(max_length=3, choices=HEADPHONES_ON_CHOICES, null=True, blank=False)
 
     age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
 
@@ -243,6 +266,10 @@ class Participant(models.Model):
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
         elif self.stage == Stages.done_with_trials:
+            self.stage = Stages.devices_questionnaire
+        elif self.stage == Stages.devices_questionnaire:
+            pass  # handled by the
+        elif self.stage == Stages.devices_questionnaire_filled:
             self.stage = Stages.goodbye
         else:
             # Setting "before_block" and "done_with_trials" stages is handled by the `get_next_trial` method
@@ -258,10 +285,23 @@ class Participant(models.Model):
         else:
             return TRIALS_PER_BLOCK_TEST
 
+    PARTICIPANT_FORM_NAME = 'ParticipantForm'
+    DEVICES_QUESTIONNAIRE_FORM_NAME = 'DeviceQuestionnaireForm'
+    FORM_NAMES = (PARTICIPANT_FORM_NAME, DEVICES_QUESTIONNAIRE_FORM_NAME)
+
     def save_data_from_form(self, form):
-        form.save()
-        self.stage = Stages.form_filled
-        self.save()
+        form_name = form.data.get('form_name')
+        if form_name in self.FORM_NAMES:
+            form.save()
+
+            if form_name == self.PARTICIPANT_FORM_NAME:
+                self.stage = Stages.form_filled
+            elif form_name == self.DEVICES_QUESTIONNAIRE_FORM_NAME:
+                self.stage = Stages.devices_questionnaire_filled
+            self.save()
+
+        else:
+            raise ValueError(f'Form name {form_name} is not recognized by {type(self)}')
 
 
 class Trial(models.Model):
