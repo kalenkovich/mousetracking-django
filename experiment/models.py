@@ -31,6 +31,8 @@ class Stages(object):
     before_block = 'before_block'
     in_block = 'in_block'
     done_with_trials = 'done_with_trials'
+    devices_questionnaire = 'devices_questionnaire'
+    devices_questionnaire_filled = 'devices_questionnaire_filled'
     goodbye = 'goodbye'
 
 
@@ -264,6 +266,10 @@ class Participant(models.Model):
         elif self.stage == Stages.before_block and page_just_seen == Stages.before_block:
             self.stage = Stages.in_block
         elif self.stage == Stages.done_with_trials:
+            self.stage = Stages.devices_questionnaire
+        elif self.stage == Stages.devices_questionnaire:
+            pass  # handled by the
+        elif self.stage == Stages.devices_questionnaire_filled:
             self.stage = Stages.goodbye
         else:
             # Setting "before_block" and "done_with_trials" stages is handled by the `get_next_trial` method
