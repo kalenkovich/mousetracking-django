@@ -18,7 +18,10 @@
                 alert('Screening task ' + didPassMessage + '.');
             });
 
-            var headphoneCheckConfig = {};
+            var headphoneCheckConfig = {
+                {% url 'experiment:headphone_check_json' as headphone_check_json_url %}
+                jsonPath:  "{{ headphone_check_json_url }}",
+            };
             /* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
             HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
         });
