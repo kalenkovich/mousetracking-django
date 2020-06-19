@@ -135,17 +135,22 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
    */
   HeadphoneCheck.renderHeadphoneCheckPage = function() {
     // render boilerplate instruction text
+    $('<hr/>').appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-instruction',
-      html: 'When you hit <b>Play</b>, you will hear three sounds separated by silences.'
+      // html: 'When you hit <b>Play</b>, you will hear three sounds separated by silences.'
+      html: 'Пеосле того, как вы нажмете <b>Проиграть</b>, вы услышите три звука подряд, разделенных небольшими ' +
+            'паузами.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-instruction',
-      text: 'Simply judge WHICH SOUND WAS SOFTEST (quietest) -- 1, 2, or 3?'
+      // text: 'Simply judge WHICH SOUND WAS SOFTEST (quietest) -- 1, 2, or 3?'
+      text: 'Ваша задача - выбрать, какой из трех звуков был самым тихим - 1, 2 или 3?'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-instruction',
-      text: 'Test sounds can only be played once!'
+      // text: 'Test sounds can only be played once!'
+      text: 'Звуки можно будет проиграть только один раз!'
     }).appendTo($('#hc-container'));
 
     if (headphoneCheckConfig.debug) console.log(headphoneCheckData);
@@ -184,7 +189,9 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
 
     // Add button to continue
     $('<button/>', {
-      text: 'Continue',
+      // text: 'Continue',
+      text: 'Продолжить',
+      class: 'btn btn-primary',
       click: function () {
         var canContinue = checkCanContinue();
         for (stimID = 0; stimID < headphoneCheckConfig.trialsPerPage; stimID++) {
@@ -332,7 +339,9 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
     .append(
       $('<button/>', {
         id: 'hc-play-button-' + stimID,
-        text: 'Play',
+        class: 'btn btn-primary',
+        // text: 'Play',
+        text: 'Проиграть',
         disabled: false,
         click: function () {
           if (!st_isPlaying) playStim(stimID);
@@ -348,10 +357,13 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
 
     //give the label info for the buttons
     var radioButtonInfo = [
-                            {'id': '1', 'name': 'FIRST sound was SOFTEST'},
-                            {'id': '2', 'name': 'SECOND sound was SOFTEST'},
-                            {'id': '3', 'name': 'THIRD sound was SOFTEST'},
-                          ];
+      // {'id': '1', 'name': 'FIRST sound was SOFTEST'},
+      // {'id': '2', 'name': 'SECOND sound was SOFTEST'},
+      // {'id': '3', 'name': 'THIRD sound was SOFTEST'},
+      {'id': '1', 'name': 'Первый звук был самым ТИХИМ'},
+      {'id': '1', 'name': 'Второй звук был самым ТИХИМ'},
+      {'id': '1', 'name': 'Третий звук был самым ТИХИМ'},
+    ];
 
     $.each(radioButtonInfo, function() {
       $('#hc-radio-buttonset-' + stimID)
