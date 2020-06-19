@@ -228,27 +228,31 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
    */
   HeadphoneCheck.renderHeadphoneCheckCalibration = function() {
     // render boilerplate instruction text
+    $('<hr/>').appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-calibration-instruction',
-      text: 'You must be wearing headphones to do this HIT!'
+      // text: 'You must be wearing headphones to do this HIT!'
+      text: 'Вначале нужно будет настроить громкость.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-calibration-instruction',
-      text: 'Level Calibration'
+      // text: 'First, set your computer volume to about 25% of maximum.'
+      text: 'Выставьте громкость компьютера на ~25% от максимума.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-calibration-instruction',
-      text: 'First, set your computer volume to about 25% of maximum.'
-    }).appendTo($('#hc-container'));
-    $('<div/>', {
-      class: 'hc-calibration-instruction',
-      text: 'Press the button, then turn up the volume on your computer until the ' +
-            'calibration noise is at a loud but comfortable level.'
+      // text: 'Press the button, then turn up the volume on your computer until the ' +
+      //       'calibration noise is at a loud but comfortable level.'
+      text: 'Проиграйте настроечный звук, после чего увеличивайте громкость, пока не будет громко, но все еще ' +
+            'комфортно.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       id: 'hc-calibration-div',
-      text: 'Play the calibration sound as many times as you like.'
+      // text: 'Play the calibration sound as many times as you like.'
+      text: 'Настроечный звук можно будет проиграть любое число раз.'
     }).appendTo($('#hc-container'));
+
+    $('<br/>').appendTo($('#hc-container'));
 
     //add in the audio source
     $('<audio/>', {
@@ -258,27 +262,33 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
 
     //add in the button for playing the sound
     $('<button/>', {
-      id: 'hc-calibration-play-button' ,
+      id: 'hc-calibration-play-button',
+      class: 'btn btn-primary',
       disabled: false,
       click: function () {
         if (!st_isPlaying){
           playCalibration('hc-calibration-audio');
         }
       },
-      text: 'Play',
-    }).css('display', 'block').appendTo($('#hc-calibration-div'));
+      // text: 'Play',
+      text: 'Проиграть настроечный звук',
+    }).css('display', 'block').appendTo($('#hc-container'));
 
+    $('<br/>').appendTo($('#hc-container'));
     $('<div/>', {
       class: 'hc-calibration-instruction',
-      html: 'Press <b>Continue</b> when level calibration is complete.',
+      // html: 'Press <b>Continue</b> when level calibration is complete.',
+      html: 'Нажмите <b>Продолжить</b>, когда закончите регулировку громкости.',
     }).appendTo($('#hc-container'));
 
     // Add button to continue
+    $('<br/>').appendTo($('#hc-container'));
     $('<button/>', {
       id: 'hc-calibration-continue-button',
-      class: 'hc-calibration-instruction',
+      class: 'hc-calibration-instruction btn btn-primary',
       disabled: true,
-      text: 'Continue',
+      // text: 'Continue',
+      text: 'Продолжить',
       click: function () {
         st_isPlaying = false;
         teardownHTMLPage();
