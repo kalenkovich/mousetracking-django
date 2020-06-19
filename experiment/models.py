@@ -258,7 +258,7 @@ class Participant(models.Model):
         if self.stage == '':
             self.stage = Stages.welcome
         elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
-            self.stage == Stages.devices_check
+            self.stage = Stages.devices_check
         elif self.stage == Stages.devices_check:
             pass  # advancing is handled by save_devices_check_results
         elif self.stage == Stages.devices_check_passed:
