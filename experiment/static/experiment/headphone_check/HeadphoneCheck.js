@@ -361,8 +361,8 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
       // {'id': '2', 'name': 'SECOND sound was SOFTEST'},
       // {'id': '3', 'name': 'THIRD sound was SOFTEST'},
       {'id': '1', 'name': 'Первый звук был самым ТИХИМ'},
-      {'id': '1', 'name': 'Второй звук был самым ТИХИМ'},
-      {'id': '1', 'name': 'Третий звук был самым ТИХИМ'},
+      {'id': '2', 'name': 'Второй звук был самым ТИХИМ'},
+      {'id': '3', 'name': 'Третий звук был самым ТИХИМ'},
     ];
 
     $.each(radioButtonInfo, function() {
