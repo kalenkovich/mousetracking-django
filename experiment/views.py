@@ -1,6 +1,6 @@
 import json
 
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
@@ -181,3 +181,10 @@ def headphone_check_json(request):
     }
 
     return JsonResponse(data=data)
+
+
+def save_headphone_check_results(request):
+    participant: Participant = Participant.get_participant(request)
+    passed_headphones_check = json.loads(request.body.decode('utf-8')).get('headphoneCheckDidPass')
+    participant.save_devices_check_results(passed_headphones_check=passed_headphones_check)
+    return HttpResponse(status=204)  # successfullly processed and returning an empty response
