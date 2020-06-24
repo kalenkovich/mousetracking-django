@@ -12,10 +12,28 @@
     <script>
         $(document).ready(function () {
             $(document).on('hcHeadphoneCheckEnd', function (event, data) {
-                var headphoneCheckDidPass = data.didPass;
-                var headphoneCheckData = data.data;
-                var didPassMessage = headphoneCheckDidPass ? 'passed' : 'failed';
-                alert('Screening task ' + didPassMessage + '.');
+                const headphoneCheckDidPass = data.didPass;
+                if (headphoneCheckDidPass) {
+                    $.post({
+                        {% url 'experiment:save_headphone_check_results' as save_headphone_check_results %}
+                        url: '{{ save_headphone_check_results }}',
+                        headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                        dataType: 'json',
+                        data: JSON.stringify({headphoneCheckDidPass: headphoneCheckDidPass}),
+                        success: function (data) {
+                            window.location.href = window.location.href;
+                        }
+                    })
+                } else {
+                    $('<hr/>').appendTo($('#hc-container'));
+                    $('<div/>', {
+                        class: 'row bg-warning',
+                        text: 'К сожалению, наш тест выявил проблему с вашими наушниками. Часто причиной этой ' +
+                            'проблемы является то, что участник эксперимента не надел наушники. Если в вашем ' +
+                            'случае это не так, вы можете попробовать повторить тест, перезагрузив страницу.'
+                    }).appendTo($('#hc-container'));
+                }
+
             });
 
             var headphoneCheckConfig = {
