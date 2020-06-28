@@ -50,6 +50,7 @@
             const headphoneCheckConfig = {
                 {% url 'experiment:headphone_check_json' as headphone_check_json_url %}
                 jsonPath:  "{{ headphone_check_json_url }}",
+                // totalTrials: 1,  when debugging
                 trialsPerPage: 6,
             };
             /* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
