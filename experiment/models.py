@@ -23,6 +23,8 @@ N_BLOCKS_TEST = 2
 
 class Stages(object):
     welcome = 'welcome'
+    devices_check = 'devices_check'
+    devices_check_passed = 'devices_check_passed'
     participant_form = 'participant_form'
     form_filled = 'form_filled'
     instructions = 'instructions'
@@ -85,6 +87,8 @@ class Participant(models.Model):
         (HEADPHONES_ON_NO, 'не вышло проходить в наушниках'),
     )
     headphones_on = models.CharField(max_length=3, choices=HEADPHONES_ON_CHOICES, null=True, blank=False)
+
+    passed_headphones_check = models.BooleanField(default=None, null=True)
 
     age = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)], null=True)
 
@@ -254,6 +258,10 @@ class Participant(models.Model):
         if self.stage == '':
             self.stage = Stages.welcome
         elif self.stage == Stages.welcome and page_just_seen == Stages.welcome:
+            self.stage = Stages.devices_check
+        elif self.stage == Stages.devices_check:
+            pass  # advancing is handled by save_devices_check_results
+        elif self.stage == Stages.devices_check_passed:
             self.stage = Stages.participant_form
         elif self.stage == Stages.participant_form:
             pass  # advancing from participant_form stage is done when the form is saved
@@ -302,6 +310,12 @@ class Participant(models.Model):
 
         else:
             raise ValueError(f'Form name {form_name} is not recognized by {type(self)}')
+
+    def save_devices_check_results(self, passed_headphones_check):
+        self.passed_headphones_check = passed_headphones_check
+        if passed_headphones_check:
+            self.stage = Stages.devices_check_passed
+        self.save()
 
 
 class Trial(models.Model):

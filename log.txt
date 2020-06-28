@@ -229,3 +229,8 @@ python manage.py migrate experiment
 # Added 'headphones_on' and 'pointing_device' fields to Participant
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+# # Check that the participants are wearing headphones
+# Added 'headphones_check_passed' field to Participant
+python manage.py makemigrations experiment
+python manage.py migrate experiment

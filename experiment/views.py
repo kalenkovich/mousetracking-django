@@ -1,7 +1,8 @@
 import json
 
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+from django.templatetags.static import static
 from django.urls import reverse
 
 from .forms import ParticipantForm, DevicesQuestionnaireForm
@@ -10,6 +11,10 @@ from .models import Participant, Trial, Stages
 
 def pc_only(request):
     return render(request, 'experiment/pc_only.html')
+
+
+def devices_check(request):
+    return render(request, 'experiment/devices_check.html')
 
 
 def router(request, is_test):
@@ -24,6 +29,9 @@ def router(request, is_test):
 
     if stage == Stages.welcome:
         return welcome(request)
+
+    if stage == Stages.devices_check:
+        return devices_check(request)
 
     if stage == Stages.participant_form:
         return participant_form(request, participant=participant)
@@ -151,3 +159,32 @@ def participant_form(request, participant=None):
 
 def devices_questionnaire_form(request, participant=None):
     return abstract_form(request, participant, DevicesQuestionnaireForm, 'experiment/devices_questionnaire_form.html')
+
+
+def headphone_check_json(request):
+    wav_folder = 'experiment/headphone_check/'
+
+    def get_wav_url(wav_name):
+        return static(wav_folder + wav_name)
+
+    data = {
+        'stimuli': [
+            {'id': 1, 'src': get_wav_url('antiphase_HC_ISO.wav'), 'correct': '2'},
+            {'id': 2, 'src': get_wav_url('antiphase_HC_IOS.wav'), 'correct': '3'},
+            {'id': 3, 'src': get_wav_url('antiphase_HC_SOI.wav'), 'correct': '1'},
+            {'id': 4, 'src': get_wav_url('antiphase_HC_SIO.wav'), 'correct': '1'},
+            {'id': 5, 'src': get_wav_url('antiphase_HC_OSI.wav'), 'correct': '2'},
+            {'id': 6, 'src': get_wav_url('antiphase_HC_OIS.wav'), 'correct': '3'}
+        ],
+        'calibration':
+            {'src': get_wav_url('noise_calib_stim.wav')}
+    }
+
+    return JsonResponse(data=data)
+
+
+def save_headphone_check_results(request):
+    participant: Participant = Participant.get_participant(request)
+    passed_headphones_check = json.loads(request.body.decode('utf-8')).get('headphoneCheckDidPass')
+    participant.save_devices_check_results(passed_headphones_check=passed_headphones_check)
+    return HttpResponse(status=204)  # successfullly processed and returning an empty response
