@@ -21,7 +21,18 @@
                         dataType: 'json',
                         data: JSON.stringify({headphoneCheckDidPass: headphoneCheckDidPass}),
                         success: function (data) {
-                            window.location.href = window.location.href;
+                            const container = $('#hc-container');
+                            $('<hr/>').appendTo(container);
+                            $('<div/>', {
+                                class: 'bg-success',
+                                text: 'Наушники были успешно протестированы.'
+                            }).appendTo(container);
+                            $('<hr/>').appendTo(container);
+                            $('<button/>', {
+                                class: 'btn btn-primary',
+                                text: 'Продолжить',
+                                on: {click: () => {window.location.href = window.location.href;}}
+                            }).appendTo(container);
                         }
                     })
                 } else {
