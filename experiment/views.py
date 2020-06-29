@@ -138,9 +138,9 @@ def abstract_form(request, participant, form_class, form_template):
         if form.is_valid():
             participant.save_data_from_form(form)
             if not participant.is_test:
-                return HttpResponseRedirect(reverse('router'))
+                return HttpResponseRedirect(reverse('experiment:router'))
             else:
-                return HttpResponseRedirect(reverse('router_test'))
+                return HttpResponseRedirect(reverse('experiment:router_test'))
 
     else:
         form = form_class(instance=participant)
