@@ -55,11 +55,20 @@ const trial = {
         return JSON.parse(localStorage.getItem('correct_response'));
     },
 
+    set full_detailed_feedback(value) {
+        localStorage.setItem('full_detailed_feedback', JSON.stringify(value));
+    },
+
+    get full_detailed_feedback() {
+        return JSON.parse(localStorage.getItem('full_detailed_feedback'));
+    },
+
     update_settings: function (data) {
         trial.uris = data.uris;
         trial.timing = data.timing;
         trial.trial_id = data.trial_id;
         trial.correct_response = data.correct_response;
+        trial.full_detailed_feedback = true;  // TODO: change to data.full_detailed_feedback;
         trial.has_been_run = false;
     },
     // end of trial info stuff
