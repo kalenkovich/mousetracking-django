@@ -127,6 +127,7 @@ const trial = {
         response_options.add();
         start_button.add();
         feedback.add();
+        modal.setup();
     },
 
     promise_to_load_all: function () {
@@ -475,6 +476,13 @@ start_button = {
 
 
 const modal = {
+    setup: () => {
+        const span = document.getElementsByClassName("close")[0];
+        span.onclick = modal.hide;
+    },
+
+    onHideRunOnce: () => {},  // intentionally does nothing
+
     get element() {
         return $('#myModal').get(0);
     },
@@ -490,6 +498,10 @@ const modal = {
 
     hide: () => {
         modal.element.style.display = "none";
+
+        // Hiding the pop-up can result in triggering additional code if modal.onHideRunOnce is set to a function.
+        modal.onHideRunOnce();
+        modal.onHideRunOnce = () => {};  // intentionally does nothing
     },
 };
 
