@@ -17,7 +17,7 @@ def create_random_seed():
 
 
 TRIALS_PER_BLOCK = 32
-TRIALS_PER_BLOCK_TEST = 2
+TRIALS_PER_BLOCK_TEST = 5
 N_BLOCKS_TEST = 2
 
 
