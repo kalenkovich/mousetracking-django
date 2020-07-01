@@ -68,7 +68,7 @@ const trial = {
         trial.timing = data.timing;
         trial.trial_id = data.trial_id;
         trial.correct_response = data.correct_response;
-        trial.full_detailed_feedback = true;  // TODO: change to data.full_detailed_feedback;
+        trial.full_detailed_feedback = data.full_detailed_feedback;
         trial.has_been_run = false;
     },
     // end of trial info stuff
