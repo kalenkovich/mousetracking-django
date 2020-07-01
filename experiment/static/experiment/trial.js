@@ -246,6 +246,7 @@ const trial = {
                 'правильно ли вы ответили.';
             modal.onHideRunOnce = () => {  // this function will be run when the message above is closed
                 frame.show();
+                response_options.disable();
                 response_options.show();
                 audio.play();
 
