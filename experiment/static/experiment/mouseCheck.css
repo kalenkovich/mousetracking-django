@@ -1,0 +1,7 @@
+.mouseCheck-scrollable {
+  height: 10vh;
+}
+
+#mouseCheck-scrollable-div {
+  overflow-y: auto;
+}

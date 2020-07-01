@@ -15,6 +15,16 @@ const mouseCheck = {
         }).appendTo(container);
 
         // Scrollable window with the hidden "continue" button.
+        $('<div/>', {
+            id: "mouseCheck-scrollable-div",
+            class: "mouseCheck-scrollable border",
+        }).appendTo(container);
+        const scrollableDiv = $('#mouseCheck-scrollable-div');
+        // Empty span of the same height (set in css to class .mouseCheck-scrollable)
+        $('<div/>', {
+            class: "mouseCheck-scrollable",
+        }).appendTo(scrollableDiv);
+
 
         // Add button to continue
         $('<br/>').appendTo(container);
@@ -28,7 +38,7 @@ const mouseCheck = {
             container.empty();
             $(document).trigger('mouseCheckEnd', {didPass: true});
           }
-        }).appendTo(container);
+        }).appendTo(scrollableDiv);
     },
 
 

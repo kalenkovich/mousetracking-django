@@ -2,15 +2,13 @@
 {% load static %}
 
 {% block head-css %}
-    <link rel="stylesheet" type="text/css"
-          href="{%  static "experiment/headphone_check/HeadphoneCheckStyle.css" %}">
+    <link rel="stylesheet" type="text/css" href="{%  static "experiment/headphone_check/HeadphoneCheckStyle.css" %}">
+    <link rel="stylesheet" type="text/css" href="{%  static "experiment/mouseCheck.css" %}">
 {% endblock %}
 
 {% block head-js %}
-    <script type="text/javascript"
-            src="{%  static "experiment/headphone_check/HeadphoneCheck.js" %}"></script>
-        <script type="text/javascript"
-            src="{%  static "experiment/mouseCheck.js" %}"></script>
+    <script type="text/javascript" src="{%  static "experiment/headphone_check/HeadphoneCheck.js" %}"></script>
+    <script type="text/javascript" src="{%  static "experiment/mouseCheck.js" %}"></script>
     <script>
         $(document).ready(function () {
             $(document).on('hcHeadphoneCheckEnd', function (event, data) {
