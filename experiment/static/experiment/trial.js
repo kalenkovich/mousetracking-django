@@ -485,6 +485,7 @@ const modal = {
 
     show: () => {
         modal.element.style.display = "block";
+        mousetracking.switch_to_real_cursor();
     },
 
     hide: () => {
