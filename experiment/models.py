@@ -380,7 +380,16 @@ class Trial(models.Model):
                     audio=static(self.audio.uri),
                     frame_images=frame_images_uris)
         timing = dict(frame=self.frame_duration, audio=self.hold_duration)
-        return dict(uris=uris, timing=timing, correct_response=self.correct_response)
+
+        # For the first half of the training trials we show extended feedback
+        full_detailed_feedback = False
+        if self.kind == self.TRAINING:
+            n_training_trials = self.participant.trial_set.filter(kind=self.TRAINING).count()
+            half_of_that = ceil(n_training_trials / 2)
+            full_detailed_feedback = self.number <= half_of_that
+
+        return dict(uris=uris, timing=timing, correct_response=self.correct_response,
+                    full_detailed_feedback=full_detailed_feedback)
 
     def save_results(self, results):
         trial_results = TrialResults(

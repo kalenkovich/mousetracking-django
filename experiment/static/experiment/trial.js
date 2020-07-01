@@ -55,11 +55,20 @@ const trial = {
         return JSON.parse(localStorage.getItem('correct_response'));
     },
 
+    set full_detailed_feedback(value) {
+        localStorage.setItem('full_detailed_feedback', JSON.stringify(value));
+    },
+
+    get full_detailed_feedback() {
+        return JSON.parse(localStorage.getItem('full_detailed_feedback'));
+    },
+
     update_settings: function (data) {
         trial.uris = data.uris;
         trial.timing = data.timing;
         trial.trial_id = data.trial_id;
         trial.correct_response = data.correct_response;
+        trial.full_detailed_feedback = data.full_detailed_feedback;
         trial.has_been_run = false;
     },
     // end of trial info stuff
@@ -127,6 +136,7 @@ const trial = {
         response_options.add();
         start_button.add();
         feedback.add();
+        modal.setup();
     },
 
     promise_to_load_all: function () {
@@ -146,8 +156,8 @@ const trial = {
     },
 
     start: function () {
-        $('#start-button').prop("disabled", true);
-        $('.response-div').prop("disabled", false);
+        start_button.disable();
+        response_options.enable();
         start_button.hide();
         mousetracking.onPointerUnlock = trial.abort;
         mousetracking.start_tracking();
@@ -179,8 +189,8 @@ const trial = {
 
     abort: function () {
         // Hide everything
-        $('.response-div').prop("disabled", true);
-        $('#start-button').prop("disabled", false);
+        response_options.disable();
+        start_button.enable();
         trial.hide_all();
 
         // Discard any mousetracking data
@@ -191,17 +201,21 @@ const trial = {
     },
 
     stop: function () {
-        $('.response-div').prop("disabled", true);
-        $('#start-button').prop("disabled", false);
+        response_options.disable();
+        start_button.enable();
         trial.hide_all();
 
         // send the results to the server
         mousetracking.stop_tracking();
         trial.results.trajectory = mousetracking.trajectory;
         Promise.all([
-            feedback.show_and_hide_promise(trial.correct_response).then(trial.check_initiation_time),
-            trial.send_results().then(trial.promise_to_load_all)]
-        ).then(start_button.show);
+            feedback.show_and_hide_promise(trial.correct_response)
+                .then(trial.show_all_stimuli)  // only done during the first couple of the training trials
+                .then(trial.check_initiation_time),
+            trial.send_results()]
+        )
+            .then(trial.promise_to_load_all)
+            .then(start_button.show);
     },
 
     debug: function () {
@@ -217,6 +231,40 @@ const trial = {
                 modal.show();
             }
             return resolve();
+        });
+    },
+
+    show_all_stimuli: function() {
+        return new Promise((resolve) => {
+            if (!trial.full_detailed_feedback) {
+                return resolve();
+            }
+
+            modal.text =
+                'Сейчас мы снова покажем рамку, варианты ответа и проиграем вопрос. Так будет происходить только в ' +
+                'течение первых нескольких тренировочных предъявлений - в дальнейшем мы будем только сообщать, ' +
+                'правильно ли вы ответили.';
+            modal.onHideRunOnce = () => {  // this function will be run when the message above is closed
+                frame.show();
+                response_options.disable();
+                response_options.show();
+                audio.play();
+
+                window.setTimeout(
+                    () => {
+                        modal.text = 'Продолжите, когда будете готовы';
+                        modal.onHideRunOnce = () => {  // this function will be run when the message above is closed
+                            trial.hide_all();
+                            return resolve();
+                        };
+                        modal.show();
+                    },
+                6000);
+            };
+
+            modal.show();
+
+
         });
     },
 };
@@ -424,6 +472,13 @@ response_options = {
         $('.response-div').css('visibility', 'hidden');
     },
 
+    enable: function() {
+        $('.response-div').prop("disabled", false);
+    },
+
+    disable: function() {
+        $('.response-div').prop("disabled", true);
+    },
 };
 
 start_button = {
@@ -471,10 +526,24 @@ start_button = {
         $('#start-button').css('visibility', 'hidden');
     },
 
+    enable: function() {
+        $('#start-button').prop("disabled", false);
+    },
+
+    disable: function() {
+        $('#start-button').prop("disabled", true);
+    },
 };
 
 
 const modal = {
+    setup: () => {
+        const span = document.getElementsByClassName("close")[0];
+        span.onclick = modal.hide;
+    },
+
+    onHideRunOnce: () => {},  // intentionally does nothing
+
     get element() {
         return $('#myModal').get(0);
     },
@@ -490,6 +559,10 @@ const modal = {
 
     hide: () => {
         modal.element.style.display = "none";
+
+        // Hiding the pop-up can result in triggering additional code if modal.onHideRunOnce is set to a function.
+        modal.onHideRunOnce();
+        modal.onHideRunOnce = () => {};  // intentionally does nothing
     },
 };
 
