@@ -9,6 +9,8 @@
 {% block head-js %}
     <script type="text/javascript"
             src="{%  static "experiment/headphone_check/HeadphoneCheck.js" %}"></script>
+        <script type="text/javascript"
+            src="{%  static "experiment/mouseCheck.js" %}"></script>
     <script>
         $(document).ready(function () {
             $(document).on('hcHeadphoneCheckEnd', function (event, data) {
@@ -53,8 +55,28 @@
                 // totalTrials: 1,  when debugging
                 trialsPerPage: 6,
             };
-            /* 5) Run the headphone check, with customization options defined in headphoneCheckConfig */
-            HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+
+            $(document).on('mouseCheckEnd', function (event, data) {
+                const mouseCheckDidPass = data.didPass;
+                if (mouseCheckDidPass) {
+                    HeadphoneCheck.runHeadphoneCheck(headphoneCheckConfig);
+                } else {
+                    $('<hr/>').appendTo($('#hc-container'));
+                    $('<div/>', {
+                        class: 'bg-warning',
+                        text: 'К сожалению, наш тест выявил проблему с вашей мышью. Часто причиной этой ' +
+                            'проблемы является то, что участник эксперимента использует тачпад/трекпад вместо мыши. ' +
+                            'Если в вашем случае это не так, вы можете попробовать повторить тест, перезагрузив страницу.'
+                    }).appendTo($('#hc-container'));
+                }
+            });
+
+            function runDevicesCheck(){
+                mouseCheck.runMouseCheck();
+            };
+
+            runDevicesCheck();
+
         });
     </script>
 {% endblock %}
