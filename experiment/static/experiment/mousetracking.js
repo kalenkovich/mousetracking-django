@@ -60,8 +60,11 @@ const mousetracking = {
         // Save a point now, so that we have a first point when the cursor is released, not when the mouse first moves
         mousetracking.add_current_coordinates();
         fake_cursor.release(mousetracking.add_current_coordinates);
-    }
+    },
 
+    switch_to_real_cursor: function() {
+        fake_cursor.turn_off();
+    },
 };
 
 const fake_cursor = {

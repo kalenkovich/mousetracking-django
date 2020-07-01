@@ -13,5 +13,25 @@
 </head>
 
 <body>
+
+{# modal skeleton from https://www.w3schools.com/howto/howto_css_modals.asp #}
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p id="modalText"></p>
+  </div>
+
+</div>
+
+<script>
+    const span = document.getElementsByClassName("close")[0];
+    span.onclick = function() {
+        const modal = document.getElementById('myModal');
+        modal.style.display = "none";
+    }
+</script>
+
 <script src="../../static/experiment/trial.js" onload="trial.setup()"></script>
 </body>

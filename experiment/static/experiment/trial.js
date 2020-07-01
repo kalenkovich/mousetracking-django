@@ -197,16 +197,28 @@ const trial = {
 
         // send the results to the server
         mousetracking.stop_tracking();
-        trial.results.trajectory = JSON.stringify(mousetracking.trajectory);
+        trial.results.trajectory = mousetracking.trajectory;
         Promise.all([
-            feedback.show_and_hide_promise(trial.correct_response),
+            feedback.show_and_hide_promise(trial.correct_response).then(trial.check_initiation_time),
             trial.send_results().then(trial.promise_to_load_all)]
         ).then(start_button.show);
     },
 
     debug: function () {
         fullscreen.stop_enforcing_fullscreen();
-    }
+    },
+
+    check_initiation_time: function () {
+        const initiationTimeInMs = trial.results.trajectory[1].t - trial.results.trajectory[0].t;
+        return new Promise(function (resolve) {
+            if (initiationTimeInMs > 1000) {
+                modal.text = 'Пожалуйста, начинайте выбор сразу после того, как появятся варианты ответа, даже если вы еще ' +
+                      'не до конца уверены в своем решении';
+                modal.show();
+            }
+            return resolve();
+        });
+    },
 };
 
 function promise_to_load_image(img_element, uri) {
@@ -460,6 +472,27 @@ start_button = {
     },
 
 };
+
+
+const modal = {
+    get element() {
+        return $('#myModal').get(0);
+    },
+
+    set text(s) {
+        $('#modalText').get(0).innerText = s;
+    },
+
+    show: () => {
+        modal.element.style.display = "block";
+        mousetracking.switch_to_real_cursor();
+    },
+
+    hide: () => {
+        modal.element.style.display = "none";
+    },
+};
+
 
 const feedback = {
     duration: 500,
