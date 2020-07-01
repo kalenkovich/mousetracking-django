@@ -209,9 +209,13 @@ const trial = {
         mousetracking.stop_tracking();
         trial.results.trajectory = mousetracking.trajectory;
         Promise.all([
-            feedback.show_and_hide_promise(trial.correct_response).then(trial.check_initiation_time),
-            trial.send_results().then(trial.promise_to_load_all)]
-        ).then(start_button.show);
+            feedback.show_and_hide_promise(trial.correct_response)
+                .then(trial.show_all_stimuli)  // only done during the first couple of the training trials
+                .then(trial.check_initiation_time),
+            trial.send_results()]
+        )
+            .then(trial.promise_to_load_all)
+            .then(start_button.show);
     },
 
     debug: function () {
@@ -227,6 +231,39 @@ const trial = {
                 modal.show();
             }
             return resolve();
+        });
+    },
+
+    show_all_stimuli: function() {
+        return new Promise((resolve) => {
+            if (!trial.full_detailed_feedback) {
+                return resolve();
+            }
+
+            modal.text =
+                'Сейчас мы снова покажем рамку, варианты ответа и проиграем вопрос. Так будет происходить только в ' +
+                'течение первых нескольких тренировочных предъявлений - в дальнейшем мы будем только сообщать, ' +
+                'правильно ли вы ответили.';
+            modal.onHideRunOnce = () => {  // this function will be run when the message above is closed
+                frame.show();
+                response_options.show();
+                audio.play();
+
+                window.setTimeout(
+                    () => {
+                        modal.text = 'Продолжите, когда будете готовы';
+                        modal.onHideRunOnce = () => {  // this function will be run when the message above is closed
+                            trial.hide_all();
+                            return resolve();
+                        };
+                        modal.show();
+                    },
+                6000);
+            };
+
+            modal.show();
+
+
         });
     },
 };
