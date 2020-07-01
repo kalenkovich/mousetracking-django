@@ -156,8 +156,8 @@ const trial = {
     },
 
     start: function () {
-        $('#start-button').prop("disabled", true);
-        $('.response-div').prop("disabled", false);
+        start_button.disable();
+        response_options.enable();
         start_button.hide();
         mousetracking.onPointerUnlock = trial.abort;
         mousetracking.start_tracking();
@@ -189,8 +189,8 @@ const trial = {
 
     abort: function () {
         // Hide everything
-        $('.response-div').prop("disabled", true);
-        $('#start-button').prop("disabled", false);
+        response_options.disable();
+        start_button.enable();
         trial.hide_all();
 
         // Discard any mousetracking data
@@ -201,8 +201,8 @@ const trial = {
     },
 
     stop: function () {
-        $('.response-div').prop("disabled", true);
-        $('#start-button').prop("disabled", false);
+        response_options.disable();
+        start_button.enable();
         trial.hide_all();
 
         // send the results to the server
@@ -471,6 +471,13 @@ response_options = {
         $('.response-div').css('visibility', 'hidden');
     },
 
+    enable: function() {
+        $('.response-div').prop("disabled", false);
+    },
+
+    disable: function() {
+        $('.response-div').prop("disabled", true);
+    },
 };
 
 start_button = {
@@ -518,6 +525,13 @@ start_button = {
         $('#start-button').css('visibility', 'hidden');
     },
 
+    enable: function() {
+        $('#start-button').prop("disabled", false);
+    },
+
+    disable: function() {
+        $('#start-button').prop("disabled", true);
+    },
 };
 
 
