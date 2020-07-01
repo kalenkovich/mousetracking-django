@@ -37,10 +37,16 @@ const mousetracking = {
         fake_cursor.hide();
     },
 
+    should_plot_trajectories: false,
+
     stop_tracking: function () {
         document.removeEventListener('mousemove', mousetracking.add_current_coordinates);
         console.log('Stopped tracking');
-        mousetracking.plot_trajectory();
+
+        // plot trajectory points on the screen for development purposes
+        if (mousetracking.should_plot_trajectories) {
+            mousetracking.plot_trajectory();
+        }
     },
 
     plot_trajectory: function () {
