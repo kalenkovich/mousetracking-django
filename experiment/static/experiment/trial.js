@@ -212,8 +212,9 @@ const trial = {
         const initiationTimeInMs = trial.results.trajectory[1].t - trial.results.trajectory[0].t;
         return new Promise(function (resolve) {
             if (initiationTimeInMs > 1000) {
-                alert('Пожалуйста, начинайте выбор сразу после того, как появятся варианты ответа, даже если вы еще ' +
-                      'не до конца уверены в своем решении');
+                modal.text = 'Пожалуйста, начинайте выбор сразу после того, как появятся варианты ответа, даже если вы еще ' +
+                      'не до конца уверены в своем решении';
+                modal.show();
             }
             return resolve();
         });
@@ -471,6 +472,26 @@ start_button = {
     },
 
 };
+
+
+const modal = {
+    get element() {
+        return $('#myModal').get(0);
+    },
+
+    set text(s) {
+        $('#modalText').get(0).innerText = s;
+    },
+
+    show: () => {
+        modal.element.style.display = "block";
+    },
+
+    hide: () => {
+        modal.element.style.display = "none";
+    },
+};
+
 
 const feedback = {
     duration: 500,
