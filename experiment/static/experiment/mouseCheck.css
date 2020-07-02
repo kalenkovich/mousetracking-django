@@ -5,3 +5,7 @@
 #mouseCheck-scrollable-div {
   overflow-y: auto;
 }
+
+#mouseCheck-continue-button {
+  visibility: hidden;
+}

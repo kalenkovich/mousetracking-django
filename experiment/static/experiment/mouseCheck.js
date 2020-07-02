@@ -31,6 +31,7 @@ const mouseCheck = {
                 arrayOfChecks.push(mouseCheck.oneWheelLooksLikeMouse(e));
                 if (arrayOfChecks.length >= 10){
                    mouseCheck.isMouse = arrayOfChecks.every(Boolean);
+                   mouseCheck.revealContinueButton();
                    finished = true;
                 }
             }
@@ -39,6 +40,12 @@ const mouseCheck = {
 
     runMouseCheck: function(){
         mouseCheck.render();
+    },
+
+    revealContinueButton: function(){
+        const buttonElement = document.getElementById("mouseCheck-continue-button");
+        buttonElement.disabled = false;
+        buttonElement.style.visibility = "visible";
     },
 
     render: function(){
@@ -69,7 +76,7 @@ const mouseCheck = {
         $('<button/>', {
           id: 'mouseCheck-continue-button',
           class: 'mouseCheck-instruction btn btn-primary',
-          disabled: false,  // TODO: enable after at least some scrolling
+          disabled: true,
           // text: 'Continue',
           text: 'Продолжить',
           click: function () {
