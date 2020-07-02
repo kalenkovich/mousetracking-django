@@ -1,4 +1,42 @@
 const mouseCheck = {
+    isMouse: null,
+
+    oneWheelLooksLikeMouse: function (e) {
+        console.log(
+            'wheelDelta', e.wheelDelta,
+            'deltaMode', e.deltaMode,
+            'deltaY', e.deltaY
+        )
+
+        let isMouse = false;
+        if ('wheelDelta' in e && Math.abs(e.wheelDelta) === 120) {
+                isMouse = true;
+        } else if (!('wheelDelta' in e)) {  // firefox/IE
+            if (e.deltaMode === 1 &&  Number.isInteger(e.deltaY)) {  // firefox
+                isMouse = true;
+            } else if (e.deltaMode === 0 &&  e.deltaY > 50) {  // ie
+                isMouse = true;
+            }
+
+        }
+        return isMouse;
+    },
+
+    tenWheelsLookLikeMouse: (function() {
+        const arrayOfChecks = [];
+
+        let finished = false;
+        return function(e) {
+            if (!finished) {
+                arrayOfChecks.push(mouseCheck.oneWheelLooksLikeMouse(e));
+                if (arrayOfChecks.length >= 10){
+                   mouseCheck.isMouse = arrayOfChecks.every(Boolean);
+                   finished = true;
+                }
+            }
+        };
+    })(),
+
     runMouseCheck: function(){
         mouseCheck.render();
     },
@@ -36,10 +74,12 @@ const mouseCheck = {
           text: 'Продолжить',
           click: function () {
             container.empty();
-            $(document).trigger('mouseCheckEnd', {didPass: true});
+            $(document).trigger('mouseCheckEnd', {didPass: mouseCheck.isMouse});
           }
         }).appendTo(scrollableDiv);
-    },
 
+        // Listen for scrolling
+        document.addEventListener("wheel", mouseCheck.tenWheelsLookLikeMouse, false);
+    },
 
 };
