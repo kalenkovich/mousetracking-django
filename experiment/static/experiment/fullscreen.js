@@ -78,8 +78,17 @@ const fullscreen = {
         document.removeEventListener("msfullscreenchange", fun);
     },
 
+    isFullscreen: function() {
+        return (
+            document.fullscreenElement || /* Standard syntax */
+            document.webkitFullscreenElement || /* Chrome, Safari and Opera syntax */
+            document.mozFullScreenElement ||/* Firefox syntax */
+            document.msFullscreenElement /* IE/Edge syntax */
+        );
+    },
+
     ask_for_fullscreen: function () {
-        if (document.fullscreenElement !== null) {
+        if (fullscreen.isFullscreen()) {
             return
         }
         $(".backdrop").fadeTo(200, 1);
@@ -100,7 +109,7 @@ const fullscreen = {
     },
 
     handle_exit: function () {
-        if (document.fullscreenElement === null) {
+        if (!fullscreen.isFullscreen()) {
             fullscreen.onFullscreenExit();
             $("body").css("overflow", "auto");
             fullscreen.ask_for_fullscreen();
