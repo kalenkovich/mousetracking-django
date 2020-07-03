@@ -8,17 +8,17 @@ const fullscreen = {
         }
 
         const div = document.createElement('div');
-        div.className = 'backdrop';
-        div.id = "backdrop-div";
+        div.id = "fullscreen-modal-div";
         div.innerHTML = `
-		  <!-- From solution here: https://stackoverflow.com/a/44328113/3042770 -->
-		  <div id="popdiv">
-			This experiment must be run in fullscreen mode.
-			<br>
-			To exit fullscreen mode, press ESC.
-			<br>
-			<button id="btn-go-fullscreen">Switch to fullscreen</button>
 		  </div>
+		    <div class="fullscreen-modal-content">
+		        <p>
+                    This experiment must be run in fullscreen mode.
+                    <br>
+                    To exit fullscreen mode, press ESC.
+                </p>
+                <button id="btn-go-fullscreen">Switch to fullscreen</button>
+            </div>
 		`;
         document.body.appendChild(div);
     },
@@ -91,14 +91,15 @@ const fullscreen = {
         if (fullscreen.isFullscreen()) {
             return
         }
-        $(".backdrop").fadeTo(200, 1);
+        $('#fullscreen-modal-div').fadeTo(200, 1);
+
         const button_selector =  $("#btn-go-fullscreen");
         button_selector.off('click');
         button_selector.click(fullscreen.switch_to_fullscreen);
     },
 
     hide_popup: function () {
-        $(".backdrop").fadeOut(200);
+        $('#fullscreen-modal-div').fadeOut(200);
     },
 
     switch_to_fullscreen: function () {

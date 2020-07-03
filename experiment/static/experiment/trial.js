@@ -538,8 +538,7 @@ start_button = {
 
 const modal = {
     setup: () => {
-        const span = document.getElementsByClassName("close")[0];
-        span.onclick = modal.hide;
+        document.getElementById("modal-close").onclick = modal.hide;
     },
 
     onHideRunOnce: () => {},  // intentionally does nothing
