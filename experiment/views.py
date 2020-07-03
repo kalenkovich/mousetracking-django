@@ -27,6 +27,11 @@ def router(request, is_test):
     participant = Participant.get_or_create_participant(request, is_test=is_test)
     stage = participant.determine_stage(page_just_seen=request.POST.get('just_saw'))
 
+    # If the request came from a page that had a "Continue" button that sends a POST request with 'just_saw' then we
+    # need to redirect back to the same page. Otherwise, reloading will resend the POST request
+    if 'just_saw' in request.POST:
+        return HttpResponseRedirect(request.path)
+
     if stage == Stages.welcome:
         return welcome(request)
 
