@@ -79,7 +79,7 @@ const fullscreen = {
     },
 
     isFullscreen: function() {
-        return (
+        return Boolean(
             document.fullscreenElement || /* Standard syntax */
             document.webkitFullscreenElement || /* Chrome, Safari and Opera syntax */
             document.mozFullScreenElement ||/* Firefox syntax */
