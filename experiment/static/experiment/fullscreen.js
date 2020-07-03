@@ -15,7 +15,7 @@ const fullscreen = {
 		        <p>
                     This experiment must be run in fullscreen mode.
                     <br>
-                    To exit fullscreen mode, press ESC.
+                    To exit fullscreen mode, press ESC or F11.
                 </p>
                 <button id="btn-go-fullscreen">Switch to fullscreen</button>
             </div>
