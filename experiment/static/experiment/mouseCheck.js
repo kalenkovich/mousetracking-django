@@ -9,7 +9,7 @@ const mouseCheck = {
         )
 
         let isMouse = false;
-        if ('wheelDelta' in e && Math.abs(e.wheelDelta) === 120) {
+        if ('wheelDelta' in e && e.wheelDelta % 120 === 0 && e.wheelDelta !== 0) {
                 isMouse = true;
         } else if (!('wheelDelta' in e)) {  // firefox/IE
             if (e.deltaMode === 1 &&  Number.isInteger(e.deltaY)) {  // firefox
