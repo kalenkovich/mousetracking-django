@@ -1,0 +1,44 @@
+﻿device,browser,event type,wheelDelta,wheelDeltaY,deltaMode,deltaY,deltaX,detail
+mouse,chrome,wheel,-120,-120,0,100,-0,0
+mouse,chrome,mousewheel,-120,-120,0,100,-0,0
+touchpad,chrome,wheel,-16,-16,0,13.333333969116211,-0,0
+touchpad,chrome,wheel,-4,-4,0,3.3333334922790527,-0,0
+touchpad,chrome,wheel,-11,-11,0,9.166666984558105,-0,0
+touchpad,chrome,wheel,-18,-18,0,15,-0,0
+touchpad,chrome,mousewheel,-13,-13,0,10.833332061767578,-0,0
+touchpad,chrome,mousewheel,-6,-6,0,5,-0,0
+touchpad,chrome,mousewheel,-1,-1,0,0.8333333730697632,-0,0
+mouse,EdgeChromium,wheel,-120,-120,0,145.0500030517578,0,0
+mouse,EdgeChromium,mousewheel,-120,-120,0,145.0500030517578,0,0
+touchpad,EdgeChromium,wheel,-1,-1,0,0.9670000076293945,0,0
+touchpad,EdgeChromium,wheel,-15,-15,0,17.4060001373291,0,0
+touchpad,EdgeChromium,mousewheel,7,7,0,-7.736000061035156,0,0
+touchpad,EdgeChromium,mousewheel,13,13,0,-15.472000122070312,0,0
+mouse,firefox,DOMMouseScroll,undefined,undefined,undefined,undefined,undefined,3
+touchpad,firefox ,DOMMouseScroll,undefined,undefined,undefined,undefined,undefined,1
+mouse,IE,mousewheel,-120,undefined,undefined,undefined,undefined,0
+touchpad,IE ,mousewheel,1,undefined,undefined,undefined,undefined,0
+mouse,firefox,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,51
+touchpad,firefox ,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,6
+touchpad,firefox ,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,3
+touchpad,firefox ,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,3
+touchpad,firefox ,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,3
+touchpad,firefox ,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,3
+touchpad,firefox ,MozMousePixelScroll,undefined,undefined,undefined,undefined,undefined,3
+mouse,firefox,wheel,undefined,undefined,1,3,0,0
+touchpad,firefox ,wheel,undefined,undefined,1,0.4,0,0
+touchpad,firefox ,wheel,undefined,undefined,1,0.2,0,0
+touchpad,firefox ,wheel,undefined,undefined,1,0.2,0,0
+touchpad,firefox ,wheel,undefined,undefined,1,0.2,0,0
+touchpad,firefox ,wheel,undefined,undefined,1,0.2,0,0
+touchpad,firefox ,wheel,undefined,undefined,1,0.2,0,0
+mouse,IE,wheel,undefined,undefined,0,88.94999694824219,0,0
+touchpad,IE ,wheel,undefined,undefined,0,-0.5929999947547913,0,0
+,,,,,,,,
+,,,,,,,,
+mouse,opera,wheel,-120,-120,0,100,-0,0
+mouse,opera,mousewheel,-120,-120,0,100,-0,0
+touchpad,opera,wheel,12,12,0,-10,-0,0
+touchpad,opera,wheel,3,3,0,-2.5,-0,0
+touchpad,opera,wheel,-1,-1,0,0.8333333730697632,-0,0
+toucpad,opera,mousewheel,-23,-23,0,19.16666603,-0,0
