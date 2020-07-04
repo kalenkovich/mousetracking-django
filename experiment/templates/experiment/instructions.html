@@ -137,3 +137,15 @@
     </p>
 
 {% endblock %}
+
+{% block continue_button %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="just_saw" value="{{ stage }}">
+            <button type="submit" class="btn btn-primary">
+                Перейти к практике
+            </button>
+        </form>
+    </div>
+{% endblock %}
