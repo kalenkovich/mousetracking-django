@@ -146,11 +146,15 @@ const trial = {
     },
 
     promise_to_load_all: function () {
-        const load_promises = [
-            response_options.promise_to_load_images(),
-            frame.promise_to_load_images(),
-            audio.promise_to_load()];
-        return Promise.all(load_promises);
+        if (!trial.has_been_run) {
+            const load_promises = [
+                response_options.promise_to_load_images(),
+                frame.promise_to_load_images(),
+                audio.promise_to_load()];
+            return Promise.all(load_promises);
+        } else {
+            return Promise.reject();
+        }
     },
 
     hide_all: function () {
