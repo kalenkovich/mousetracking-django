@@ -80,7 +80,13 @@ const trial = {
             // Reloading will result in exiting fullscreen and pointer unlocking. We should not reaact to those.
             fullscreen.onFullscreenExit = () => {};  // do nothing
             mousetracking.onPointerUnlock = () => {};  // do nothing
-            window.location.href = window.location.href;
+
+            modal.text = 'Это блок окончен.'
+            modal.onHideRunOnce = () => {
+                // reload the page without resubmitting anything
+                window.location.href = window.location.href;
+            }
+            modal.show();
         }
     },
 
