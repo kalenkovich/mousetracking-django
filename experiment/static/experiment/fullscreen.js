@@ -17,7 +17,8 @@ const fullscreen = {
                     <br>
                     To exit fullscreen mode, press ESC or F11.
                 </p>
-                <button id="btn-go-fullscreen">Switch to fullscreen</button>
+<!--                <button id="btn-go-fullscreen">Switch to fullscreen</button>-->
+                <button id="btn-go-fullscreen">Перейти в полноэкранный режим</button>
             </div>
 		`;
         document.body.appendChild(div);
