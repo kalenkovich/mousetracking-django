@@ -3,42 +3,81 @@
 
 {% block single_column %}
 
-    <h1>Personal information</h1>
-
-    Please fill the form below.
+{#    <h1>Personal information</h1>#}
+    <h1>О Вас</h1>
 
     <form action="" method="post">
         {% csrf_token %}
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-3" for="{{ form.age.id_for_label }}">Age:</label>
+            <label class="col-form-label col-sm-3" for="{{ form.age.id_for_label }}">
+{#                Age:#}
+                Возраст:
+            </label>
             {% render_field form.age class="form-control col-sm-3" %}
         </div>
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-3" for="{{ form.sex.id_for_label }}">Sex:</label>
+            <label class="col-form-label col-sm-3" for="{{ form.sex.id_for_label }}">
+{#                Age:#}
+                Пол:
+            </label>
             {% render_field form.sex class="form-control col-sm-3" %}
         </div>
 
         <div class="form-group row">
-            <label class="col-form-label col-sm-3" for="{{ form.native_language.id_for_label }}">Native language:</label>
+            <label class="col-form-label col-sm-3" for="{{ form.native_language.id_for_label }}">
+{#                Native language:#}
+                Родной язык:
+            </label>
             {% render_field form.native_language class="form-control col-sm-3" %}
             <small class="col text-muted">{{ form.native_language.help_text }}</small>
         </div>
 
         <div class="text">
-            <h1>Informed consent</h1>
+{#            <h1>Informed consent</h1>#}
+            <h1>Информированное согласие</h1>
             Informed consent content
+
+            <ul>
+                <li>
+                    Я подтверждаю, что мне были объяснены цели, процедура, методы и возможные неудобства участия в
+                    исследовании. У меня была возможность задать все интересующие меня вопросы. Я получил(а)
+                    удовлетворительные ответы и уточнения по всем вопросам, интересовавшим меня в связи с данным
+                    исследованием. Я даю свое согласие на участие в исследовании.
+                </li>
+                <li>
+                    Я понимаю, что могу прервать свое участие в исследовании в любое время.
+                </li>
+                <li>
+                    Я понимаю, что данные, полученные в ходе исследования будут сохранены в электронном виде и далее
+                    будут размещены в публичном доступе в анонимизированном виде. Мое участие в эксперименте анонимно
+                    и мои личные данные не будут отражены.
+                </li>
+
+            </ul>
+
+
+
+
         </div>
 
         <div>
-            <br>
-            By checking the box below, I confirm that I consent to participating in the experiment.
-            <br>
+{#            <p>#}
+{#                By checking the box below, I confirm that I've read the text above and that I consent to participating#}
+{#                in the experiment.#}
+{#            </p>#}
+              <p>
+                  Ставя галочку внизу, я подтверждаю, что прочитал текст, находящийся выше, и даю свое информированное
+                  согласие на участие в эксперименте.
+              </p>
             <div class="form-check">
 
                 {% render_field form.gave_consent class="form-check-input" %}
-                <label class="form-check-label" for="{{ form.gave_consent.id_for_label }}">I confirm</label>
+                <label class="form-check-label" for="{{ form.gave_consent.id_for_label }}">
+{#                    I confirm#}
+                    Я подтверждаю
+                </label>
             </div>
         </div>
 

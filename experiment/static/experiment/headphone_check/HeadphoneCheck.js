@@ -239,6 +239,11 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
     $('<div/>', {
       class: 'hc-calibration-instruction',
       // text: 'You must be wearing headphones to do this HIT!'
+      text: 'Теперь передейдем к проверке наушников.'
+    }).appendTo($('#hc-container'));
+    $('<div/>', {
+      class: 'hc-calibration-instruction',
+      // text: 'You must be wearing headphones to do this HIT!'
       text: 'Вначале нужно будет настроить громкость.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
@@ -250,8 +255,8 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
       class: 'hc-calibration-instruction',
       // text: 'Press the button, then turn up the volume on your computer until the ' +
       //       'calibration noise is at a loud but comfortable level.'
-      text: 'Проиграйте настроечный звук, после чего увеличивайте громкость, пока не будет громко, но все еще ' +
-            'комфортно.'
+      text: 'Проиграйте настроечный звук, после чего увеличивайте громкость, пока не будет достаточно громко, но все ' +
+            'еще комфортно.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       id: 'hc-calibration-div',
