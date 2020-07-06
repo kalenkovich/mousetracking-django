@@ -503,7 +503,8 @@ start_button = {
         div.id = id;
         div.style.height = "10vh";
         div.style.width = "20vw";
-        div.innerHTML = "Start";
+        // div.innerHTML = "Start";
+        div.innerHTML = "СТАРТ";
         div.style.fontSize = "5vh";
         // Center text horizontally and vertically
         div.style.textAlign = "center";
@@ -610,10 +611,12 @@ const feedback = {
     show: function (correct_response) {
         const div = $('#' + feedback.id).get(0);
         if (trial.results.selected_response == correct_response){
-            div.innerHTML = 'Correct!';
+            // div.innerHTML = 'Correct!';
+            div.innerHTML = 'Правильно!';
             div.style.borderColor = 'green';
         } else {
-            div.innerHTML = 'That was incorrect, unfortunately';
+            // div.innerHTML = 'That was incorrect, unfortunately';
+            div.innerHTML = 'К сожалению, неправильно.';
             div.style.borderColor = 'red';
         }
         div.style.visibility = 'visible';
