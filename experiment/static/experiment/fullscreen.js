@@ -13,9 +13,12 @@ const fullscreen = {
 		  </div>
 		    <div class="fullscreen-modal-content">
 		        <p>
-                    This experiment must be run in fullscreen mode.
-                    <br>
-                    To exit fullscreen mode, press ESC or F11.
+<!--                    This experiment must be run in fullscreen mode.-->
+                    Эксперимент будет необходимо проходить в полноэкранном режиме.
+                </p>
+                <p>
+<!--                    To exit fullscreen mode, press ESC or F11.-->
+                    <em>Чтобы выйти из полноэкранного режима, нажмите ESC или F11.</em>
                 </p>
 <!--                <button id="btn-go-fullscreen">Switch to fullscreen</button>-->
                 <button id="btn-go-fullscreen">Перейти в полноэкранный режим</button>
