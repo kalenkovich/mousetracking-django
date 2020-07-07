@@ -234,3 +234,9 @@ python manage.py migrate experiment
 # Added 'de_anonymization_code' field to Participant
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+# # Save additional info about trials
+# Create a new TrialExtra model to hold all the info we will need during analysis but don't care about during
+# presentation
+python manage.py makemigrations experiment
+python manage.py migrate experiment

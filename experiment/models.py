@@ -425,6 +425,29 @@ class TrialResults(models.Model):
     trajectory = models.TextField()
 
 
+class TrialExtra(models.Model):
+    """
+    The class for all the info that we will need during analysis but we don't need during presentation
+    """
+    trial = models.OneToOneField(Trial, on_delete=models.PROTECT)
+
+    # 'top', 'left', 'right', 'bottom'
+    side = models.CharField(max_length=6)
+    # negative, positive (should have been affirmative, let's have enough space for that.
+    polarity = models.CharField(max_length=8)
+    object_number = models.IntegerField()  # 2-4
+    order = models.CharField(max_length=14)  # 'polarity_first', 'polarity_last'
+    orientation = models.CharField(max_length=7)  # 'rows', 'columns'
+    configuration = models.CharField(max_length=14)  # [[1, 0], [0, 1]], [[1, 1], [1, 0]], etc.
+    target_cell = models.CharField(max_length=6)  # (0, 0), (0, 1), (1, 1), (1, 0)
+    lure_cell = models.CharField(max_length=6)  # (0, 0), (0, 1), (1, 1), (1, 0)
+    # The longest object name is 10 characters long. Plus `len("['', '', '', '']")` which is 16. Plus 10 JIC.
+    objects_list = models.CharField(max_length=66)  # e.g., ['net', 'cheese', 'pear', 'radio']
+    location = models.CharField(max_length=6)  # top, bottom, left, right
+    target = models.CharField(max_length=10)  # 'sandwich', 'key', 'peg', 'bath', etc.
+    lure = models.CharField(max_length=10)  # 'sandwich', 'key', 'peg', 'bath', etc.
+
+
 class ResourceModel(models.Model):
     name = models.CharField(max_length=40, unique=True)
     uri = models.URLField()
