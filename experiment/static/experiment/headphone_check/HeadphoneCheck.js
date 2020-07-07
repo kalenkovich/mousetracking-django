@@ -255,13 +255,13 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
       class: 'hc-calibration-instruction',
       // text: 'Press the button, then turn up the volume on your computer until the ' +
       //       'calibration noise is at a loud but comfortable level.'
-      text: 'Проиграйте настроечный звук, после чего увеличивайте громкость, пока не будет достаточно громко, но все ' +
+      text: 'Проиграйте звук для настройки громкости, после чего увеличивайте громкость, пока не будет достаточно громко, но все ' +
             'еще комфортно.'
     }).appendTo($('#hc-container'));
     $('<div/>', {
       id: 'hc-calibration-div',
       // text: 'Play the calibration sound as many times as you like.'
-      text: 'Настроечный звук можно будет проиграть любое число раз.'
+      text: 'Звук для настройки громкости можно будет проиграть любое число раз.'
     }).appendTo($('#hc-container'));
 
     $('<br/>').appendTo($('#hc-container'));
@@ -283,7 +283,7 @@ Contact Ray Gonzalez raygon@mit.edu or Kevin J. P. Woods kwoods@mit.edu
         }
       },
       // text: 'Play',
-      text: 'Проиграть настроечный звук',
+      text: 'Проиграть звук для настройки громкости',
     }).css('display', 'block').appendTo($('#hc-container'));
 
     $('<br/>').appendTo($('#hc-container'));
