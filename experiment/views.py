@@ -60,7 +60,7 @@ def router(request, is_test):
         return devices_questionnaire_form(request, participant=participant)
 
     if stage == Stages.goodbye:
-        return goodbye(request)
+        return goodbye(request, participant=participant)
 
 
 def before_block(request, block_number, n_blocks):
@@ -77,8 +77,10 @@ def mousetracking(request):
     return render(request, 'experiment/trial.html')
 
 
-def goodbye(request):
-    return render(request, 'experiment/goodbye.html')
+def goodbye(request, participant: Participant = None):
+    participant: Participant = participant or Participant.get_participant(request)
+    return render(request, 'experiment/goodbye.html',
+                  context=dict(de_anonymization_code=participant.de_anonymization_code))
 
 
 def training(request):
