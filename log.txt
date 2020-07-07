@@ -230,7 +230,7 @@ python manage.py migrate experiment
 python manage.py makemigrations experiment
 python manage.py migrate experiment
 
-# # Check that the participants are wearing headphones
-# Added 'headphones_check_passed' field to Participant
+# # Add de-anonymization code to the last page
+# Added 'de_anonymization_code' field to Participant
 python manage.py makemigrations experiment
 python manage.py migrate experiment

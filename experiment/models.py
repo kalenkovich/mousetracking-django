@@ -42,6 +42,7 @@ class Participant(models.Model):
     created_date = models.DateTimeField(default=timezone.now)
     session = models.OneToOneField(Session, on_delete=models.SET_NULL, null=True)
     random_seed = models.IntegerField(default=create_random_seed, null=True)
+    de_anonymization_code = models.UUIDField(default=uuid.uuid4, editable=False)
 
     FEMALE = 'F'
     MALE = 'M'
