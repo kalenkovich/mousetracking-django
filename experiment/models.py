@@ -154,6 +154,7 @@ class Participant(models.Model):
                 participant.sex = cls.MALE
                 participant.native_language = cls.RUSSIAN
                 participant.gave_consent = True
+                participant.dominant_hand = cls.LEFT_HAND
                 participant.save()
 
         return participant
