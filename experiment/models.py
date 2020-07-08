@@ -57,6 +57,17 @@ class Participant(models.Model):
         choices=SEX_CHOICES,
     )
 
+    RIGHT_HAND = 'R'
+    LEFT_HAND = 'L'
+    DOMINANT_HAND_CHOICES = [
+        (RIGHT_HAND, 'правая'),
+        (LEFT_HAND, 'левая'),
+    ]
+    dominant_hand = models.CharField(
+        max_length=1,
+        choices=DOMINANT_HAND_CHOICES,
+    )
+
     RUSSIAN = 'RU'
     OTHER_LANGUAGE = 'OTHER'
     LANGUAGE_CHOICES = [
@@ -143,6 +154,7 @@ class Participant(models.Model):
                 participant.sex = cls.MALE
                 participant.native_language = cls.RUSSIAN
                 participant.gave_consent = True
+                participant.dominant_hand = cls.LEFT_HAND
                 participant.save()
 
         return participant

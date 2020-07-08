@@ -8,7 +8,7 @@ class ParticipantForm(ModelForm):
 
     class Meta:
         model = Participant
-        fields = ['age', 'sex', 'native_language', 'gave_consent']
+        fields = ['age', 'sex', 'native_language', 'dominant_hand', 'gave_consent']
         help_texts = {
             "native_language": 'Если у вас несколько родных языков и один из них - русский, выберите опцию "русский"'
         }
