@@ -21,6 +21,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 secret_key_path = os.path.join(BASE_DIR, 'secret_key.txt')
+# on pythonanywhere, we have to put this file one folder up because the helper script that sets up the whole Django app,
+# wipes the full directory before pulling from github (well, only with the --nuke options, so it might actually work
+# on a fresh pythonanywhere web app)
+if not os.path.isfile(secret_key_path):
+    secret_key_path = os.path.join(BASE_DIR, '..', 'secret_key.txt')
 with open(secret_key_path) as f:
     SECRET_KEY = f.read().strip()
 
