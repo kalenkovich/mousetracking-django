@@ -240,3 +240,12 @@ python manage.py migrate experiment
 # presentation
 python manage.py makemigrations experiment
 python manage.py migrate experiment
+
+# # Save handedness info
+# Add `dominant_hand` field to the Participant model
+python manage.py makemigrations experiment
+# set default value for existing records if prompted to
+1
+'RU'
+# migrate
+python manage.py migrate experiment
