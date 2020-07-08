@@ -249,3 +249,7 @@ python manage.py makemigrations experiment
 'RU'
 # migrate
 python manage.py migrate experiment
+
+# Added `comment` to Participant
+python manage.py makemigrations experiment
+python manage.py migrate experiment

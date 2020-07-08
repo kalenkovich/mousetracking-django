@@ -117,6 +117,8 @@ class Participant(models.Model):
 
     is_done = models.BooleanField(default=False)
 
+    comment = models.CharField(max_length=100, default='')
+
     @classmethod
     def get_session(cls, request) -> Session:
         # This will create the session instance if it does not exist yet
